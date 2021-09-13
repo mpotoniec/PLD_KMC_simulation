@@ -1,0 +1,7 @@
+Commands:
+    python -m pytest tests/tests.py
+    python -m pytest tests/parameters_tests.py
+    python -m pytest tests/event_class_tests.py
+    python -m pytest tests/point3D_class_tests.py
+    python -m pytest tests/color_class_tests.py
+    python -m pytest tests/adsorption_class_tests.py 

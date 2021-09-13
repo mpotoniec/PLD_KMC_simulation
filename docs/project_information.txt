@@ -1,0 +1,4 @@
+ver 1.0 - Project start 09.08.2021
+    Project was createt with Python 3.9.5 - 64bit and with usage of pipenv environment.
+    Default platform is Ubuntu20.4 (Linux)
+    Project will be able to use of Windows in future

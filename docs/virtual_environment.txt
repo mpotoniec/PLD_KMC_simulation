@@ -1,0 +1,7 @@
+To install from requirements.txt run:
+    pipenv install -r /.../requirements.txt
+To stop development and push to production:
+    pipenv lock
+    pipenv install --ignore-pipfile
+To write requirements to txt
+    pip freeze --local > requirements.txt
