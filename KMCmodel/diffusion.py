@@ -11,7 +11,7 @@ class Diffusion(KMCmodel.event.Event):
     def __init__(self, originCell, targetCell) -> None:
         super().__init__()
 
-        self.__cumulated_probability = 0
+        #self.__cumulated_probability = 0
         self.__originCell: KMCmodel.cell.Cell = originCell
         self.__targetCell: KMCmodel.cell.Cell = targetCell
 
@@ -70,7 +70,7 @@ class Diffusion(KMCmodel.event.Event):
     def targetCell(self, cell):
         self.__targetCell = cell
 
-    def __str__(self) -> str:
+    '''def __str__(self) -> str:
         return (
         "DYFUZJA: o komórce początkowej: [x = " 
         + str(self.__originCell.x) + ", y = " 
@@ -80,4 +80,4 @@ class Diffusion(KMCmodel.event.Event):
         + str(self.__targetCell.y) + ", z = " 
         + str(self.__targetCell.z) + "]. Z prawdopodowbieństwem: " 
         + str(super().probability) + " i prawdopodowbieństwem skumulowanym: " 
-        + str(self.__cumulated_probability))
+        + str(self.__cumulated_probability))'''

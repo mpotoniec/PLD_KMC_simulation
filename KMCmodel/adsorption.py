@@ -29,5 +29,5 @@ class Adsorption(KMCmodel.event.Event):
         + str(self.__cell.x) + ", y = " 
         + str(self.__cell.y) + ", z = " 
         + str(self.__cell.z) + "]. Z prawdopodowbieństwem: " 
-        + str(self.__probability) + " Z kolorem: " 
+        + str(self.__probability) + ". " 
         + str(self.__cell.color))

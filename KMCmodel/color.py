@@ -42,15 +42,15 @@ class Color():
         else: return False
 
     def __hash__(self) -> int:
-        return ((self.__R, self.__G, self.__B, self.__A))
-        #return 1
+        #return ((self.__R, self.__G, self.__B, self.__A))
+        return 1
 
     def __str__(self) -> str:
         return (
         "Kolor o wartościach RGB: [R = "
         + str(self.__R) + ", G = "
         + str(self.__G) + ", B = "
-        + str(self.__B) + "] i A = "
+        + str(self.__B) + "], A = "
         + str(self.__A))
 
 #Do zrobienia ewentualny drugi konstruktor

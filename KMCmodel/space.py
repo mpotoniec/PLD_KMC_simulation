@@ -15,11 +15,21 @@ class Space():
 
         self.__allDiffusions = np.empty((self.__size.width, self.__size.height, self.__size.depth, (9 + 8)), dtype=KMCmodel.diffusion.Diffusion, order='C')
         self.__possibleDiffusions = []
+        self.__cumulated_probability = 0
 
 
         self.__createCells()
         #print(self.__cells)
         #print(self.__allDiffusions)
+
+        '''index = 1
+        print('Tablica wszystkich dyfuzji:')
+        for diffusion_tab1 in self.__allDiffusions:
+            for diffusion_tab2 in diffusion_tab1:
+                for diffusion_tab3 in diffusion_tab2:
+                    for diffusion in diffusion_tab3:
+                        print(index, diffusion)
+                        index += 1'''
 
 
         print("Done.")
@@ -89,7 +99,11 @@ class Space():
                         #KMCmodel.diffusion.Diffusion.allDiffusions(a, b, c, l)
 
                     for l in range(0, self.__allDiffusions.shape[3], 1):
-                        possibleDiffusion_pointer = self.__allDiffusions[a, b, c, l].handleChange()
+                        if self.__allDiffusions[a, b, c, l] == None: continue
+
+                        result = self.__allDiffusions[a, b, c, l].handleChange(self.__cumulated_probability)
+                        possibleDiffusion_pointer = result[0]
+                        self.__cumulated_probability = result[1]
                         if possibleDiffusion_pointer == True: self.__possibleDiffusions.append(self.__allDiffusions[a, b, c, l])
                         elif possibleDiffusion_pointer == False: self.__possibleDiffusions.remove(self.__allDiffusions[a, b, c, l])
 
@@ -127,7 +141,7 @@ class Space():
         return self.__cells[i, j, k].color
 
     def cells_setColor(self, i, j, k, color):
-        self.__cells[i, j, k] = color
+        self.__cells[i, j, k].color = color
         self.__allDiffusions_handleChange(i, j, k)
 
 
@@ -146,6 +160,9 @@ class Space():
         return self.__possibleDiffusions
     @possibleDiffusions.setter
     def possibleDiffusions(self, diffusion):
-        self.__possibleDiffusions.append(diffusion)  
+        self.__possibleDiffusions.append(diffusion)
+    @property
+    def cumulated_probability(self):
+        return self.__cumulated_probability  
     
 #Dokończyć to Texture!!!!
