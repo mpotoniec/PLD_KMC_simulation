@@ -1,3 +1,4 @@
+from numpy.lib.function_base import diff
 import KMCmodel.size3D
 import KMCmodel.cell
 import KMCmodel.diffusion
@@ -15,7 +16,7 @@ class Space():
 
         self.__allDiffusions = np.empty((self.__size.width, self.__size.height, self.__size.depth, (9 + 8)), dtype=KMCmodel.diffusion.Diffusion, order='C')
         self.__possibleDiffusions = []
-        self.__cumulated_probability = 0
+        self.__cumulated_probability = 0.
 
 
         self.__createCells()
@@ -86,6 +87,7 @@ class Space():
         return (abs(a * b) + a) % b
 
     def __allDiffusions_handleChange(self, x, y, z):
+        #self.__cumulated_probability = 0
 
         for i in range(-2,2+1,1):
             for j in range(-2,2+1,1):
@@ -95,18 +97,18 @@ class Space():
                     b = self.__mathMod(y + j, self.__cells.shape[1])
                     c = self.__mathMod(z + k, self.__cells.shape[2])
 
-                    #for l in range(0, KMCmodel.diffusion.Diffusion.allDiffusionsLength(3), 1):
-                        #KMCmodel.diffusion.Diffusion.allDiffusions(a, b, c, l)
-
                     for l in range(0, self.__allDiffusions.shape[3], 1):
                         if self.__allDiffusions[a, b, c, l] == None: continue
+                        self.__handleChange(self.__allDiffusions[a, b, c, l])
 
-                        result = self.__allDiffusions[a, b, c, l].handleChange(self.__cumulated_probability)
-                        possibleDiffusion_pointer = result[0]
-                        self.__cumulated_probability = result[1]
-                        if possibleDiffusion_pointer == True: self.__possibleDiffusions.append(self.__allDiffusions[a, b, c, l])
-                        elif possibleDiffusion_pointer == False: self.__possibleDiffusions.remove(self.__allDiffusions[a, b, c, l])
+    def __handleChange(self, diffusion: KMCmodel.diffusion.Diffusion):
+        pervous_probability = diffusion.probability
 
+        result = diffusion.calculateProbability(self.__cumulated_probability)
+        if result != None: self.__cumulated_probability = result
+
+        if diffusion.probability > 0 and pervous_probability == 0: self.__possibleDiffusions.append(diffusion)
+        elif pervous_probability > 0 and diffusion.probability == 0: self.__possibleDiffusions.remove(diffusion)
 
 
     def getColorAtIndex(self,index):

@@ -3,10 +3,11 @@ import KMCmodel.event
 import KMCmodel.cell
 import KMCmodel.parameters
 
-class Adsorption(KMCmodel.event.Event):
+#class Adsorption(KMCmodel.event.Event):
+class Adsorption():
     '''adss'''
     def __init__(self, cell: KMCmodel.cell.Cell, adsorption_probability) -> None:
-        super().__init__()
+        #super().__init__()
         self.__cell = cell
         self.__probability = adsorption_probability
 

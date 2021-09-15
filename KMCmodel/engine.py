@@ -68,19 +68,24 @@ class Engine():
 
         print('WYKONANIE PROGRAMU')
 
+        #index = 0
         while(not self.__isComplited):
 
             propabilitySums = self.__cumulatedProbability()
             self.__handleEvent(self.__findEvent(propabilitySums))
-            #self.__handleEvent(None)
-            #self.__handleEvent(KMCmodel.diffusion.Diffusion(KMCmodel.cell.Cell(0,0,0), KMCmodel.cell.Cell(1,1,1)))
 
             time += 1 / propabilitySums.all
 
-            #self.__isComplited = True
+            #if index == 2: self.__isComplited = True
+            #index+=1
+            
+            #self.printads()
             #self.printstate()
         #self.printstate()
+
+
         print(f'Ilość wystąpień adsorpcji: {self.__adsorptionCount:,} oraz dyfuzji {self.__diffusionCount:,} i None {self.__NoneCount:,}')
+        print(f'Ilość wystąpień wszystkich zdarzeń: {self.__adsorptionCount + self.__diffusionCount + self.__NoneCount:,}')
         
         finish_time = t.perf_counter()
         print(f'Zakończenie działania programu w: {round(finish_time - start_time, 2)}[s] ')
@@ -109,14 +114,12 @@ class Engine():
         adsorption_cumulated_probability = self.__parameters.adsorption_probability * self.__adsorptionList.shape[0]
         diffusion_cumulated_probability = self.__space.cumulated_probability
 
-        cumulated_probability = adsorption_cumulated_probability + diffusion_cumulated_probability
-
         return self.EventsProbability(diffusion_cumulated_probability, adsorption_cumulated_probability)
 
     def __findEvent(self, events_probability: EventsProbability):
 
-        print('Ilość możliwych dyfuzji', len(self.__space.possibleDiffusions))
-        print(events_probability)
+        #print('Ilość możliwych dyfuzji', len(self.__space.possibleDiffusions))
+        #print(events_probability)
 
         rng_value = self.__rng.random_sample()
         eventTypePointer = events_probability.all * rng_value
@@ -129,7 +132,6 @@ class Engine():
 
             for diffusion in self.__space.possibleDiffusions:
                 diffusion_probability_sum += diffusion.probability
-                print(diffusion_probability_sum)
                 if diffusion_probability_sum >= diffusionPointer: return diffusion
 
             return None
@@ -138,7 +140,6 @@ class Engine():
         #print(event)
 
         if isinstance(event, KMCmodel.adsorption.Adsorption): #ADSORPCJA
-            #print('Adsorpcja przeszło')
             self.__adsorptionCount+=1
 
             cell = event.cell
@@ -147,8 +148,8 @@ class Engine():
                 self.__step = cell.y + 1
                 pr_value = (self.__step * 100) / self.__space.size.height
                 print(f'Symulacja ukończona w: {pr_value}%')
-
-
+                print(f'Ilość wystąpień adsorpcji: {self.__adsorptionCount:,} oraz dyfuzji {self.__diffusionCount:,} i None {self.__NoneCount:,}')
+                print(f'Ilość wystąpień wszystkich zdarzeń: {self.__adsorptionCount + self.__diffusionCount + self.__NoneCount:,}')
 
             if cell.y + 1 == self.__space.size.height:
                 self.__isComplited = True
@@ -157,8 +158,6 @@ class Engine():
             cell.color = cell.getMostPopularColorInNeighbourhood()
             if cell.color.A == 0:
                 cell.color = self.__space.getColorAtIndex(self.__space.getNewColor())
-            #print(cell.color)
-
             self.__space.cells_setColor(cell.x, cell.y, cell.z, cell.color)
 
             adsEv = KMCmodel.adsorption.Adsorption(self.__space.cells[cell.x, cell.y + 1, cell.z], self.__parameters.adsorption_probability)
@@ -166,7 +165,6 @@ class Engine():
             #event.cell = self.__space.cells[cell.x, cell.y + 1, cell.z]
 
         elif isinstance(event, KMCmodel.diffusion.Diffusion): #DYFUZJA
-            #print('Dufizja przeszło')
             self.__diffusionCount+=1
 
             origin = event.originCell
@@ -175,8 +173,41 @@ class Engine():
             target.color = target.getMostPopularColorInNeighbourhood()
             if target.color.A == 0:
                 target.color = self.__space.getColorAtIndex(self.__space.getNewColor())
+            self.__space.cells_setColor(target.x, target.y, target.z, target.color)
+            
             origin.color = self.__space.getColorAtIndex(0)
+            self.__space.cells_setColor(origin.x, origin.y, origin.z, origin.color)
 
+            #Change adsorption of target cell
+            adsEv_target = None
+            for adsorption in self.__adsorptionList:
+                if adsorption.cell.x == target.x and  adsorption.cell.y == target.y and  adsorption.cell.z == target.z:
+                    adsEv_target = adsorption
+
+            if adsEv_target != None:
+                
+                baceCell_target = adsEv_target.cell
+                
+                if baceCell_target.y + 1 == self.__space.size.height:
+                    self.__isComplited = True
+                    return 0
+                
+                adsEv = KMCmodel.adsorption.Adsorption(self.__space.cells[baceCell_target.x, baceCell_target.y + 1, baceCell_target.z], self.__parameters.adsorption_probability)
+                adsEv_target = adsEv
+
+            
+            #Change adsorption of origin cell
+            adsEv_origin = None
+            for adsorption in self.__adsorptionList:
+                if adsorption.cell.x == origin.x and  adsorption.cell.y == origin.y + 1 and  adsorption.cell.z == origin.z:
+                    adsEv_origin = adsorption
+
+            if adsEv_origin != None:
+
+                baceCell_origin = adsEv_origin.cell
+
+                adsEv = KMCmodel.adsorption.Adsorption(self.__space.cells[baceCell_origin.x, baceCell_origin.y - 1, baceCell_origin.z], self.__parameters.adsorption_probability)
+                adsEv_origin = adsEv
 
         else:
             self.__NoneCount+=1 
@@ -192,3 +223,8 @@ class Engine():
             for cell_tab2 in cell_tab1:
                 for cell in cell_tab2:
                     print(cell)
+
+    def printads(self):
+        print('Tablica wszystkich adsorpcji')
+        for adsorption in self.__adsorptionList:
+            print(adsorption)

@@ -5,6 +5,7 @@ import sys
 import os
 
 import KMCmodel.engine
+import KMCmodel.parameters
 
 def main():
 
@@ -24,6 +25,10 @@ def main():
     print('Uruchamianie programu:')
     engine = KMCmodel.engine.Engine()
     engine.startCalculations()
+
+
+    #parameters = KMCmodel.parameters.Parameters()
+    #print(parameters)
     print('Ukończono')
 
     return 0
