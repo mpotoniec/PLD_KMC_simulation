@@ -3,7 +3,7 @@
 class Parameters():
     '''Class with parameters of program'''
     def __init__(self) -> None:
-        self.__space_size = 2 #70
+        self.__space_size = 20 #70
         self.__substrate_temperature = 700
         self.__melting_temperature = 2930
         self.__boltzman_constant = 8.617333262 * 10e-5
@@ -11,6 +11,7 @@ class Parameters():
         self.__n = 1
         self.__energyAA = 0.8
         self.__energy_vapour = 1000
+        self.__deposition_rate_diffusion = 0.05
         self.__cell_dim = 1e-9
         self.__nano_second = 1e-9
 
@@ -71,6 +72,12 @@ class Parameters():
     def energy_vapour(self, energy_vapour):
         self.__energy_vapour = energy_vapour
     @property
+    def deposition_rate_diffusion(self):
+        return self.__deposition_rate_diffusion
+    @deposition_rate_diffusion.setter
+    def deposition_rate_diffusion(self, deposition_rate_diffusion):
+        self.__deposition_rate_diffusion = deposition_rate_diffusion
+    @property
     def cell_dim(self): 
         return self.__cell_dim       
     @cell_dim.setter
@@ -100,6 +107,28 @@ class Parameters():
     @property
     def attempt_rate(self): 
         return self.__attempt_rate
+
+    def __str__(self) -> str:
+
+        to_print =  str(f"Wymiar przestrzenii = {self.__space_size:,}\n")
+        to_print += str(f"Temperatura substratu = {self.__substrate_temperature:,}\n")
+        to_print += str(f"Temperatura topnienia = {self.__melting_temperature:,}\n")
+        to_print += str(f"Stała Boltzmana = {self.__boltzman_constant:,}\n")
+        to_print += str(f"Częstość wibracji = {self.__vibration_frequency:,}\n")
+        to_print += str(f"N = {self.__n:,}\n")
+        to_print += str(f"Energia AA = {self.__energyAA:,}\n")
+        to_print += str(f"Energia mgiełki plazmy = {self.__energy_vapour:,}\n")
+        to_print += str(f"Wskaźnik depozycji dyfuzji = {self.__deposition_rate_diffusion:,}\n")
+        to_print += str(f"Rozmiar komórki = {self.__cell_dim:,}\n")
+        to_print += str(f"Nano sekunda = {self.__nano_second:,}\n")
+        to_print += str(f"Wskaźnik depozycji = {self.__deposition_rate:,}\n")
+        to_print += str(f"Prawdopodobieństwo adsorpcji = {self.__adsorption_probability:,}\n")
+        to_print += str(f"Tr = {self.__Tr:,}\n")
+        to_print += str(f"Tn = {self.__Tn:,}\n")
+        to_print += str(f"kT = {self.__kT:,}\n")
+        to_print += str(f"Wskaźnik prób = {self.__attempt_rate:,}\n")
+
+        return to_print
 
     def __hash__(self) -> int:
         return 0

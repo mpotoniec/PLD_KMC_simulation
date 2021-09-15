@@ -113,5 +113,5 @@ class Cell():
         + str(self.__x) + ", y = " 
         + str(self.__y) + ", z = " 
         + str(self.__z) + "]. Z energią: " 
-        + to_print_energy + ". Z kolorem: " 
+        + to_print_energy + ". " 
         + str(self.__color))
