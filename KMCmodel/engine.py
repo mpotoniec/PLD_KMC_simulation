@@ -8,6 +8,7 @@ import KMCmodel.diffusion
 import numpy as np
 import threading
 import datetime
+import platform
 
 import time as t
 
@@ -223,7 +224,16 @@ class Engine():
         #self.printstate()
 
     def __writer(self) -> None:
-        name = 'Results/output.dump' + str(datetime.datetime.now()).split('.')[0]
+        if platform.system() == 'Linux':
+            name = 'Results/output'+ str(datetime.datetime.now()).split('.')[0] + '.dump'
+
+        elif platform.system() == 'Windows':
+            name = 'Results/output'+ str(datetime.datetime.now()).split('.')[0] + '.dump'
+            name_tab = name.split(':')
+            name = ''
+            for char in name_tab:
+                name += char
+  
         file = open(name, 'w')
 
         timePointer = 0
@@ -245,6 +255,20 @@ class Engine():
             file.write("0 " + str(self.__space.size.height)+'\n')
             file.write("0 " + str(self.__space.size.depth)+'\n')
             file.write("ITEM: ATOMS id x y z R G B A column_id\n")
+
+            for cell_tab in self.__space.cells:
+                for cell_tab2 in cell_tab:
+                    for cell in cell_tab2:
+                
+                        file.write(str(id(cell))       + " " +
+                        str(cell.x + 0.5)              + " " +
+                        str(cell.z + 0.5)              + " " +
+                        str(cell.y + 0.5)              + " " +
+                        str(cell.color.R / 255.0)      + " " +
+                        str(cell.color.G / 255.0)      + " " +
+                        str(cell.color.B / 255.0)      + " " +
+                        str(1 - cell.color.A / 255.0)  + " " +
+                        str(id(cell.color))            + "\n")
 
         file.close()
 
