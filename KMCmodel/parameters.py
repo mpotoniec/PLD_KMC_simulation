@@ -3,7 +3,7 @@
 class Parameters():
     '''Class with parameters of program'''
     def __init__(self) -> None:
-        self.__space_size = 20 #70
+        self.__space_size = 5 #70
         self.__substrate_temperature = 700
         self.__melting_temperature = 2930
         self.__boltzman_constant = 8.617333262 * 10e-5

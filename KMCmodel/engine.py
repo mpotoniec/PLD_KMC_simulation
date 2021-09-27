@@ -6,6 +6,8 @@ import KMCmodel.adsorption
 import KMCmodel.diffusion
 
 import numpy as np
+import threading
+import datetime
 
 import time as t
 
@@ -20,6 +22,8 @@ class Engine():
         self.__rng = np.random
 
         self.__isComplited = False
+        self.__time = 0
+
         self.__step = 0
         self.__adsorptionCount = 0
         self.__diffusionCount = 0
@@ -61,28 +65,13 @@ class Engine():
     def startCalculations(self) -> int:
         start_time = t.perf_counter()
 
+        calculationsThread = threading.Thread(target=self.__makeCalculations)
+        writerThread = threading.Thread(target=self.__writer)
 
-        self.__prepareCalculations()
-
-        time = 0
-
-        print('WYKONANIE PROGRAMU')
-
-        #index = 0
-        while(not self.__isComplited):
-
-            propabilitySums = self.__cumulatedProbability()
-            self.__handleEvent(self.__findEvent(propabilitySums))
-
-            time += 1 / propabilitySums.all
-
-            #if index == 2: self.__isComplited = True
-            #index+=1
-            
-            #self.printads()
-            #self.printstate()
-        #self.printstate()
-
+        calculationsThread.start()
+        writerThread.start()
+        calculationsThread.join()
+        writerThread.join()
 
         print(f'Ilość wystąpień adsorpcji: {self.__adsorptionCount:,} oraz dyfuzji {self.__diffusionCount:,} i None {self.__NoneCount:,}')
         print(f'Ilość wystąpień wszystkich zdarzeń: {self.__adsorptionCount + self.__diffusionCount + self.__NoneCount:,}')
@@ -216,6 +205,48 @@ class Engine():
 
         return 0
 
+    def __makeCalculations(self) -> None:
+
+        #time = 0
+
+        self.__prepareCalculations()
+
+        while(not self.__isComplited):
+
+            propabilitySums = self.__cumulatedProbability()
+            self.__handleEvent(self.__findEvent(propabilitySums))
+
+            self.__time += 1 / propabilitySums.all
+            
+            #self.printads()
+            #self.printstate()
+        #self.printstate()
+
+    def __writer(self) -> None:
+        name = 'Results/output.dump' + str(datetime.datetime.now()).split('.')[0]
+        file = open(name, 'w')
+
+        timePointer = 0
+
+        while self.__isComplited == False:
+
+            if timePointer >= self.__time:
+                t.sleep(0.05)
+                continue
+            
+            timePointer += 10
+
+            file.write("ITEM: TIMESTEP\n")
+            file.write(str(self.__time)+'\n')
+            file.write("ITEM: NUMBER OF ATOMS\n")
+            file.write(str(self.__space.size.volume_size)+'\n')
+            file.write("ITEM: BOX BOUNDS pp pp pp\n")
+            file.write("0 " + str(self.__space.size.width)+'\n')
+            file.write("0 " + str(self.__space.size.height)+'\n')
+            file.write("0 " + str(self.__space.size.depth)+'\n')
+            file.write("ITEM: ATOMS id x y z R G B A column_id\n")
+
+        file.close()
 
     def printstate(self):
         print('Tablica komórek')
