@@ -224,7 +224,6 @@ class Engine():
         #self.printstate()
 
     def __writer(self) -> None:
-
         if platform.system() == 'Linux':
             name = 'Results/output'+ str(datetime.datetime.now()).split('.')[0] + '.dump'
 
