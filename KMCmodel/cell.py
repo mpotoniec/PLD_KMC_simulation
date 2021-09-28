@@ -1,5 +1,6 @@
 '''as'''
 import numpy as np
+from collections import Counter
 
 import KMCmodel.parameters
 import KMCmodel.color
@@ -19,7 +20,7 @@ class Cell():
         self.__energyAA = KMCmodel.parameters.Parameters().energyAA
 
     def getMostPopularColorInNeighbourhood(self):
-        result = KMCmodel.color.Color(0, 0, 0, 0)
+        '''result = KMCmodel.color.Color(0, 0, 0, 0)
         colors = {}
 
         for cell in self.__neighbourhood:
@@ -34,10 +35,18 @@ class Cell():
             if colors[color] >= maxCount:
                 maxCount = colors[color]
                 result = color
-        
-        #if result.A == 0:
-            #result = self.__uniqueColor.getColorAtIndex(self.__uniqueColor.getNewColor())
 
+        return result'''
+
+        colors = []
+        for cell in self.__neighbourhood:
+            if cell.color.A == 0: continue
+            colors.append(cell.color)
+
+        if len(colors) != 0: 
+            result = Counter(colors).most_common()[0][0]
+        else: result = KMCmodel.color.Color(0, 0, 0, 0) 
+        
         return result
 
 
@@ -96,9 +105,6 @@ class Cell():
 
                     for l in range(0, KMCmodel.diffusion.Diffusion.allDiffusionsLength(3), 1):
                         KMCmodel.diffusion.Diffusion.allDiffusions(a, b, c, l)'''
-    @property
-    def uniqueColor(self):
-        return self.__uniqueColor
 
     def __eq__(self, cell: object) -> bool:
         if self.__x == cell.x and self.__y == cell.y and self.__z == cell.z:
