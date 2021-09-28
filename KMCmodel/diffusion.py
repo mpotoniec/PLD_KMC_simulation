@@ -6,11 +6,9 @@ import KMCmodel.parameters
 
 import numpy as np
 
-#class Diffusion(KMCmodel.event.Event):
 class Diffusion():
     '''Class representing diffusion in model. This class inherits from event class'''
     def __init__(self, originCell, targetCell) -> None:
-        #super().__init__()
         
         self.__probability = 0
         self.__originCell: KMCmodel.cell.Cell = originCell

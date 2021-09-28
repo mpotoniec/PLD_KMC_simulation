@@ -20,7 +20,7 @@ class Parameters():
         self.__adsorption_probability = self.__deposition_rate / self.__cell_dim
         self.__Tr = self.__substrate_temperature
         self.__Tn = pow(self.__Tr, self.__n)
-        self.__kT = self.__Tr*self.__boltzman_constant
+        self.__kT = self.__Tr * self.__boltzman_constant
         self.__attempt_rate = self.__vibration_frequency
 
     @property

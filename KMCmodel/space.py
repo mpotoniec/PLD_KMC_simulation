@@ -18,7 +18,7 @@ class Space():
         self.__possibleDiffusions = []
         self.__cumulated_probability = 0.
 
-
+        self.getTransparentColor()
         self.__createCells()
         #print(self.__cells)
         #print(self.__allDiffusions)
