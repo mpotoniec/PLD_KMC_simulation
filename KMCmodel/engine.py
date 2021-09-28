@@ -74,6 +74,7 @@ class Engine():
         calculationsThread.join()
         writerThread.join()
 
+        print('Possible Diffusions ilość:', len(self.__space.possibleDiffusions))
         print(f'Ilość wystąpień adsorpcji: {self.__adsorptionCount:,} oraz dyfuzji {self.__diffusionCount:,} i None {self.__NoneCount:,}')
         print(f'Ilość wystąpień wszystkich zdarzeń: {self.__adsorptionCount + self.__diffusionCount + self.__NoneCount:,}')
         
@@ -129,21 +130,26 @@ class Engine():
     def __handleEvent(self, event):
         #print(event)
 
-        if isinstance(event, KMCmodel.adsorption.Adsorption): #ADSORPCJA
-            self.__adsorptionCount+=1
-
-            cell = event.cell
-            
-            if cell.y + 1 > self.__step:
-                self.__step = cell.y + 1
+        if isinstance(event, KMCmodel.adsorption.Adsorption):
+            if event.cell.y + 1 > self.__step:
+                self.__step = event.cell.y + 1
                 pr_value = (self.__step * 100) / self.__space.size.height
                 print(f'Symulacja ukończona w: {pr_value}%')
                 print(f'Ilość wystąpień adsorpcji: {self.__adsorptionCount:,} oraz dyfuzji {self.__diffusionCount:,} i None {self.__NoneCount:,}')
                 print(f'Ilość wystąpień wszystkich zdarzeń: {self.__adsorptionCount + self.__diffusionCount + self.__NoneCount:,}')
 
+
+
+        if isinstance(event, KMCmodel.adsorption.Adsorption): #ADSORPCJA
+            self.__adsorptionCount+=1
+
+            cell = event.cell
+
+
             if cell.y + 1 == self.__space.size.height:
                 self.__isComplited = True
                 return 0
+
             
             cell.color = cell.getMostPopularColorInNeighbourhood()
             if cell.color.A == 0:
@@ -154,11 +160,17 @@ class Engine():
             self.__adsorptionList[self.__adsorptionList == event] = adsEv
             #event.cell = self.__space.cells[cell.x, cell.y + 1, cell.z]
 
+
+
+
+
+
         elif isinstance(event, KMCmodel.diffusion.Diffusion): #DYFUZJA
             self.__diffusionCount+=1
 
             origin = event.originCell
             target = event.targetCell
+
 
             target.color = target.getMostPopularColorInNeighbourhood()
             if target.color.A == 0:
@@ -198,6 +210,10 @@ class Engine():
 
                 adsEv = KMCmodel.adsorption.Adsorption(self.__space.cells[baceCell_origin.x, baceCell_origin.y - 1, baceCell_origin.z], self.__parameters.adsorption_probability)
                 adsEv_origin = adsEv
+
+
+
+
 
         else:
             self.__NoneCount+=1 
@@ -267,10 +283,13 @@ class Engine():
                         str(cell.color.R / 255.0)      + " " +
                         str(cell.color.G / 255.0)      + " " +
                         str(cell.color.B / 255.0)      + " " +
-                        str(1 - cell.color.A / 255.0)  + " " +
+                        str(1 - cell.color.A / 255)  + " " +
                         str(id(cell.color))            + "\n")
 
         file.close()
+
+
+
 
     def printstate(self):
         print('Tablica komórek')
