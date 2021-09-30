@@ -87,7 +87,6 @@ class Space():
         return (abs(a * b) + a) % b
 
     def __allDiffusions_handleChange(self, x, y, z):
-        #self.__cumulated_probability = 0
 
         for i in range(-2,2+1,1):
             for j in range(-2,2+1,1):

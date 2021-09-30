@@ -14,8 +14,11 @@ class Diffusion():
         self.__originCell: KMCmodel.cell.Cell = originCell
         self.__targetCell: KMCmodel.cell.Cell = targetCell
 
+        self.__parameters = KMCmodel.parameters.Parameters()
+
     def equals(self, event) -> bool:
-        if type(event) is not Diffusion: return False
+        #if type(event) is not Diffusion: return False
+        if not(isinstance(event, Diffusion)): return False
         else:
             diff: Diffusion = event
             if diff.originCell == self.__originCell and diff.targetCell == self.__targetCell: return True
@@ -43,13 +46,11 @@ class Diffusion():
         if self.__targetCell.color.A != 0:
             self.__probability = 0
             return cumulated_probability
-        
-        parameters = KMCmodel.parameters.Parameters()
 
         energyDiff = self.__targetCell.energy - self.__originCell.energy
-        expParam = -energyDiff / parameters.kT
-        self.__probability = parameters.Tn * parameters.attempt_rate * np.exp(expParam)
-        self.__probability = self.__probability / (parameters.deposition_rate_diffusion / (parameters.cell_dim * parameters.nano_second))
+        expParam = -energyDiff / self.__parameters.kT
+        self.__probability = self.__parameters.Tn * self.__parameters.attempt_rate * np.exp(expParam)
+        self.__probability = self.__probability / (self.__parameters.deposition_rate_diffusion / (self.__parameters.cell_dim * self.__parameters.nano_second))
 
         cumulated_probability += self.__probability
 

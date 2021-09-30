@@ -6,3 +6,5 @@ Commands:
     python -m pytest tests/color_class_tests.py
     python -m pytest tests/adsorption_class_tests.py 
     python -m pytest tests/cell_class_tests.py
+    python -m pytest tests/diffusion_class_tests.py
+    python -m pytest tests/space_class_tests.py
