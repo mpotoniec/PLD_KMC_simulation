@@ -16,25 +16,7 @@ class Diffusion():
 
         self.__parameters = KMCmodel.parameters.Parameters()
 
-    def equals(self, event) -> bool:
-        #if type(event) is not Diffusion: return False
-        if not(isinstance(event, Diffusion)): return False
-        else:
-            diff: Diffusion = event
-            if diff.originCell == self.__originCell and diff.targetCell == self.__targetCell: return True
-            else: return False
-
     #TODO zrobić overide int czy coś tam
-
-    '''def handleChange(self):
-        #pervous_probability = self.__probability
-        pervous_probability = super().probability
-
-        self.calculateProbability()
-
-        if self.__probability > 0 and pervous_probability == 0: return True #self.__possibleDiffusions.append(self) 
-        elif pervous_probability > 0 and self.__probability == 0: return False #self.__possibleDiffusions.remove(self)
-        return None '''
 
     def calculateProbability(self, cumulated_probability):
         cumulated_probability -= self.__probability
@@ -76,6 +58,13 @@ class Diffusion():
     @probability.setter
     def probability(self, probability):
         self.__probability = probability
+
+    def __eq__(self, event: object) -> bool:
+        if not(isinstance(event, Diffusion)): return False
+        else:
+            diff: Diffusion = event
+            if diff.originCell == self.__originCell and diff.targetCell == self.__targetCell: return True
+            else: return False
 
     def __str__(self) -> str:
         return (

@@ -20,24 +20,6 @@ class Cell():
         self.__energyAA = KMCmodel.parameters.Parameters().energyAA
 
     def getMostPopularColorInNeighbourhood(self):
-        '''result = KMCmodel.color.Color(0, 0, 0, 0)
-        colors = {}
-
-        for cell in self.__neighbourhood:
-            if cell.color.A == 0: continue
-            if not cell.color.A in colors.keys():
-                colors[cell.color] = 1
-            else:
-                colors[cell.color] = colors[cell.color] + 1
-
-        maxCount = 0
-        for color in colors:
-            if colors[color] >= maxCount:
-                maxCount = colors[color]
-                result = color
-
-        return result'''
-
         colors = []
         for cell in self.__neighbourhood:
             if cell.color.A == 0: continue
@@ -94,17 +76,6 @@ class Cell():
                 neighbour.energy -= energyAA
 
         self.__color = color_to_set
-
-        '''for i in range(-2,2+1,1):
-            for j in range(-2,2+1,1):
-                for k in range(-2,2+1,1):
-                    
-                    a = self.mod(self.__x + i, self.__cells.shape[0])
-                    b = self.mod(self.__y + j, self.__cells.shape[1])
-                    c = self.mod(self.__z + k, self.__cells.shape[2])
-
-                    for l in range(0, KMCmodel.diffusion.Diffusion.allDiffusionsLength(3), 1):
-                        KMCmodel.diffusion.Diffusion.allDiffusions(a, b, c, l)'''
 
     def __eq__(self, cell: object) -> bool:
         if self.__x == cell.x and self.__y == cell.y and self.__z == cell.z:
