@@ -20,18 +20,6 @@ class Space():
 
         self.getTransparentColor()
         self.__createCells()
-        #print(self.__cells)
-        #print(self.__allDiffusions)
-
-        '''index = 1
-        print('Tablica wszystkich dyfuzji:')
-        for diffusion_tab1 in self.__allDiffusions:
-            for diffusion_tab2 in diffusion_tab1:
-                for diffusion_tab3 in diffusion_tab2:
-                    for diffusion in diffusion_tab3:
-                        print(index, diffusion)
-                        index += 1'''
-
 
         print("Done.")
 
