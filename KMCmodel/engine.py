@@ -34,7 +34,7 @@ class Engine():
         self.__diffusion_adsorption_add_originCount = 0
 
         finish_time = t.perf_counter()
-        print(f'Czas działania funkcji init: {round(finish_time - start_time, 2)}[s] ')
+        print('Czas działania funkcji init:', round(finish_time - start_time, 2),'[s] ')
      
 
     class EventsProbability():
@@ -77,12 +77,12 @@ class Engine():
         calculationsThread.join()
         writerThread.join()
 
-        print(f'Ilość wystąpień adsorpcji: {self.__adsorptionCount:,} oraz dyfuzji {self.__diffusionCount:,} i None {self.__NoneCount:,}')
-        print(f'Ilość wystąpień wszystkich zdarzeń: {self.__adsorptionCount + self.__diffusionCount + self.__NoneCount:,}')
+        print('Ilość wystąpień adsorpcji:', self.__adsorptionCount, 'oraz dyfuzji', self.__diffusionCount, 'i None', self.__NoneCount)
+        print('Ilość wystąpień wszystkich zdarzeń:', self.__adsorptionCount + self.__diffusionCount + self.__NoneCount)
         print('Possible Diffusions ilość:', len(self.__space.possibleDiffusions))
         
         finish_time = t.perf_counter()
-        print(f'Zakończenie działania programu w: {round(finish_time - start_time, 2)}[s] ')
+        print('Zakończenie działania programu w:', round(finish_time - start_time, 2),'[s] ')
 
         return 0
 
@@ -134,9 +134,9 @@ class Engine():
             if event.cell.y + 1 > self.__step:
                 self.__step = event.cell.y + 1
                 pr_value = (self.__step * 100) / self.__space.size.height
-                print(f'Symulacja ukończona w: {pr_value}%')
-                print(f'Ilość wystąpień adsorpcji: {self.__adsorptionCount:,} oraz dyfuzji {self.__diffusionCount:,} i None {self.__NoneCount:,}')
-                print(f'Ilość wystąpień wszystkich zdarzeń: {self.__adsorptionCount + self.__diffusionCount + self.__NoneCount:,}')
+                print('Symulacja ukończona w:', pr_value, '%')
+                print('Ilość wystąpień adsorpcji:', self.__adsorptionCount, 'oraz dyfuzji', self.__diffusionCount, 'i None', self.__NoneCount)
+                print('Ilość wystąpień wszystkich zdarzeń:', self.__adsorptionCount + self.__diffusionCount + self.__NoneCount)
                 print('Possible Diffusions ilość:', len(self.__space.possibleDiffusions))
                 print('Ilość zdarzeń adsorpcji: ', self.__adsorptionList.shape[0])
                 print('Ilość dodanych target dyfuzji do adsorptionList:', self.__diffusion_adsorption_add_targetCount)
