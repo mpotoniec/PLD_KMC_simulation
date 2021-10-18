@@ -1,13 +1,10 @@
-'''Flie that contains class of diffusion'''
 from KMCmodel.parameters import Parameters
-#import KMCmodel.event
 import KMCmodel.cell
 import KMCmodel.parameters
 
 import math
 
 class Diffusion():
-    '''Class representing diffusion in model. This class inherits from event class'''
     def __init__(self, originCell, targetCell) -> None:
         
         self.__probability = 0

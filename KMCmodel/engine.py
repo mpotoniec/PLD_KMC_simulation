@@ -14,7 +14,6 @@ import random
 import time as t
 
 class Engine():
-    '''adssd'''
     def __init__(self) -> None:
         start_time = t.perf_counter()
 

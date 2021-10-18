@@ -1,4 +1,3 @@
-'''as'''
 from collections import Counter
 
 import KMCmodel.parameters
@@ -6,7 +5,6 @@ import KMCmodel.color
 import KMCmodel.diffusion
 
 class Cell():
-    '''asd'''
     def __init__(self, x, y, z) -> None:
         self.__x = x
         self.__y = y

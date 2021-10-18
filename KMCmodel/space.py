@@ -6,7 +6,6 @@ import KMCmodel.color
 import random
 
 class Space():
-    '''asdsa'''
     def __init__(self, size: KMCmodel.size3D.Size3D) -> None:
         '''sadsa'''
         self.__size = size

@@ -1,10 +1,5 @@
-'''File that contains basic color in model'''
-
 class Color():
-    '''Class representing basic color in model'''
     def __init__(self,R,G,B,A) -> None:
-        '''First init method that get four np.ubyte values R, G, B and A'''
-
         self.__R = R
         self.__G = G
         self.__B = B
@@ -36,7 +31,6 @@ class Color():
         self.__A = A
         
     def __eq__(self, color: object) -> bool:
-        '''Method check if two colors are equal'''
         if self.__R == color.R and self.__G == color.G and self.__B == color.B and self.__A == color.A: return True
         else: return False
 

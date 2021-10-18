@@ -1,7 +1,5 @@
-'''File with 3D point class'''
 
 class Point3D():
-    '''Class representing point 3D in space'''
     def __init__(self,x,y,z) -> None:
         self.__x = x
         self.__y = y

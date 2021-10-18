@@ -1,7 +1,5 @@
-'''File contains class with parameters of simulation'''
 
 class Parameters():
-    '''Class with parameters of program'''
     def __init__(self) -> None:
         self.__space_size = 10 #70
         self.__substrate_temperature = 2500
