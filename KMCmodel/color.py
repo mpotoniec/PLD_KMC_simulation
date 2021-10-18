@@ -1,15 +1,14 @@
 '''File that contains basic color in model'''
-import numpy as np
 
 class Color():
     '''Class representing basic color in model'''
     def __init__(self,R,G,B,A) -> None:
         '''First init method that get four np.ubyte values R, G, B and A'''
 
-        self.__R: np.ubyte = R
-        self.__G: np.ubyte = G
-        self.__B: np.ubyte = B
-        self.__A: np.ubyte = A
+        self.__R = R
+        self.__G = G
+        self.__B = B
+        self.__A = A
 
     @property
     def R(self):

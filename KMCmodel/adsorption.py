@@ -1,5 +1,5 @@
 '''asdasd'''
-import KMCmodel.event
+#import KMCmodel.event
 import KMCmodel.cell
 import KMCmodel.parameters
 
@@ -23,6 +23,10 @@ class Adsorption():
     @probability.setter
     def probability(self, probability):
         self.__probability = probability
+
+    def __eq__(self, adsorption: object) -> bool:
+        if self.__cell.x == adsorption.cell.x and self.__cell.y == adsorption.cell.y and self.__cell.z == adsorption.cell.z: return True
+        else: return False
 
     def __str__(self) -> str:
         return (

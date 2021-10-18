@@ -5,10 +5,11 @@ import KMCmodel.cell
 import KMCmodel.adsorption
 import KMCmodel.diffusion
 
-import numpy as np
+#import numpy as np
 import threading
 import datetime
 import platform
+import random
 
 import time as t
 
@@ -19,9 +20,8 @@ class Engine():
 
         self.__parameters = KMCmodel.parameters.Parameters()
         self.__space = KMCmodel.space.Space(KMCmodel.size3D.Size3D(self.__parameters.space_size, self.__parameters.space_size, self.__parameters.space_size))
-        #self.__adsorptionList = np.empty((self.__space.size.width * self.__space.size.depth),dtype=KMCmodel.adsorption.Adsorption,order='C')
         self.__adsorptionList = [None for _ in range(self.__space.size.width * self.__space.size.depth)]
-        self.__rng = np.random
+        self.__rng = random
 
         self.__isComplited = False
         self.__time = 0
@@ -95,7 +95,7 @@ class Engine():
         index = 0
         for i in range(self.__space.size.width):
             for k in range(self.__space.size.depth):
-                self.__createAdsorptionForCell(self.__space.cells[i, 0, k], index)
+                self.__createAdsorptionForCell(self.__space.cells[i][0][k], index)
                 index+=1
 
     def __createAdsorptionForCell(self, cell: KMCmodel.cell.Cell, index: int) -> None:
@@ -109,13 +109,13 @@ class Engine():
 
     def __findEvent(self, events_probability: EventsProbability):
 
-        rng_value = self.__rng.random_sample()
+        rng_value = self.__rng.random()
         eventTypePointer = events_probability.all * rng_value
         
         if eventTypePointer <= events_probability.adsorption:
-            return self.__adsorptionList[self.__rng.randint(0, len(self.__adsorptionList))]
+            return self.__adsorptionList[self.__rng.randint(0, len(self.__adsorptionList) - 1)]
         else:
-            diffusionPointer = events_probability.diffusion * self.__rng.random_sample()
+            diffusionPointer = events_probability.diffusion * self.__rng.random()
             diffusion_probability_sum = 0.
 
             for diffusion in self.__space.possibleDiffusions:
@@ -153,7 +153,7 @@ class Engine():
                 cell.color = self.__space.getColorAtIndex(self.__space.getNewColor())
             self.__space.cells_setColor(cell.x, cell.y, cell.z, cell.color)
 
-            adsEv = KMCmodel.adsorption.Adsorption(self.__space.cells[cell.x, cell.y + 1, cell.z], self.__parameters.adsorption_probability)
+            adsEv = KMCmodel.adsorption.Adsorption(self.__space.cells[cell.x][cell.y + 1][cell.z], self.__parameters.adsorption_probability)
             #self.__adsorptionList[self.__adsorptionList == event] = adsEv
             #event = adsEv
             self.__adsorptionList[self.__adsorptionList.index(event)] = adsEv
@@ -178,11 +178,19 @@ class Engine():
             self.__space.cells_setColor(origin.x, origin.y, origin.z, origin.color)
 
             #Change adsorption of target cell
-            adsEv_target_index = None
-            for i in range(len(self.__adsorptionList)):
-                if self.__adsorptionList[i].cell == target:
-                    adsEv_target_index = i
-                    break
+            #adsEv_target_index = None
+            #for i in range(len(self.__adsorptionList)):
+            #    if self.__adsorptionList[i].cell == target:
+            #        adsEv_target_index = i
+            #        break
+
+            try:
+                tmp_target_ads = KMCmodel.adsorption.Adsorption(target, self.__parameters.adsorption_probability) 
+                adsEv_target_index = self.__adsorptionList.index(tmp_target_ads)
+
+                del tmp_target_ads
+
+            except ValueError: adsEv_target_index = None 
 
             if adsEv_target_index != None:
                 self.__diffusion_adsorption_add_targetCount+=1
@@ -192,20 +200,30 @@ class Engine():
                     self.__isComplited = True
                     return 0
                 
-                self.__adsorptionList[adsEv_target_index] = KMCmodel.adsorption.Adsorption(self.__space.cells[baceCell_target.x, baceCell_target.y + 1, baceCell_target.z], self.__parameters.adsorption_probability)
+                self.__adsorptionList[adsEv_target_index] = KMCmodel.adsorption.Adsorption(self.__space.cells[baceCell_target.x][baceCell_target.y + 1][baceCell_target.z], self.__parameters.adsorption_probability)
 
             #Change adsorption of origin cell
-            adsEv_origin_index = None
-            for j in range(len(self.__adsorptionList)):
-                if self.__adsorptionList[j].cell.x == origin.x and self.__adsorptionList[j].cell.y == origin.y + 1 and self.__adsorptionList[j].cell.z == origin.z:
-                    adsEv_origin_index = j
-                    break
+            #adsEv_origin_index = None
+            #for j in range(len(self.__adsorptionList)):
+            #    if self.__adsorptionList[j].cell.x == origin.x and self.__adsorptionList[j].cell.y == origin.y + 1 and self.__adsorptionList[j].cell.z == origin.z:
+            #        adsEv_origin_index = j
+            #        break
 
+            try:
+                tmp_cell = KMCmodel.cell.Cell(origin.x, origin.y + 1, origin.z)
+                tmp_origin_ads = KMCmodel.adsorption.Adsorption(tmp_cell, self.__parameters.adsorption_probability) 
+                adsEv_origin_index = self.__adsorptionList.index(tmp_origin_ads)
+                
+                del tmp_origin_ads
+                del tmp_cell
+
+            except ValueError: adsEv_origin_index = None         
+                
             if adsEv_origin_index != None:
                 self.__diffusion_adsorption_add_originCount+=1
                 baceCell_origin = origin
  
-                self.__adsorptionList[adsEv_origin_index] = KMCmodel.adsorption.Adsorption(self.__space.cells[baceCell_origin.x, baceCell_origin.y, baceCell_origin.z], self.__parameters.adsorption_probability)
+                self.__adsorptionList[adsEv_origin_index] = KMCmodel.adsorption.Adsorption(self.__space.cells[baceCell_origin.x][baceCell_origin.y][baceCell_origin.z], self.__parameters.adsorption_probability)
             
 
 

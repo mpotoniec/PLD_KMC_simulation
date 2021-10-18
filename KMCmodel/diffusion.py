@@ -1,10 +1,10 @@
 '''Flie that contains class of diffusion'''
 from KMCmodel.parameters import Parameters
-import KMCmodel.event
+#import KMCmodel.event
 import KMCmodel.cell
 import KMCmodel.parameters
 
-import numpy as np
+import math
 
 class Diffusion():
     '''Class representing diffusion in model. This class inherits from event class'''
@@ -31,7 +31,7 @@ class Diffusion():
 
         energyDiff = self.__targetCell.energy - self.__originCell.energy
         expParam = -energyDiff / self.__parameters.kT
-        self.__probability = self.__parameters.Tn * self.__parameters.attempt_rate * np.exp(expParam)
+        self.__probability = self.__parameters.Tn * self.__parameters.attempt_rate * math.exp(expParam)
         self.__probability = self.__probability / (self.__parameters.deposition_rate_diffusion / (self.__parameters.cell_dim * self.__parameters.nano_second))
 
         cumulated_probability += self.__probability

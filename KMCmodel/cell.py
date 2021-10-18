@@ -1,5 +1,4 @@
 '''as'''
-import numpy as np
 from collections import Counter
 
 import KMCmodel.parameters
@@ -15,7 +14,8 @@ class Cell():
         self.__color = KMCmodel.color.Color(0,0,0,0)
         self.__energy = 0
 
-        self.__neighbourhood = np.empty((26), dtype=Cell, order='C')
+        #self.__neighbourhood = np.empty((26), dtype=Cell, order='C')
+        self.__neighbourhood = [None for _ in range(26)]
 
         self.__energyAA = KMCmodel.parameters.Parameters().energyAA
 
