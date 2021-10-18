@@ -24,6 +24,7 @@ def main():
 
     print('Uruchamianie programu:')
     engine = KMCmodel.engine.Engine()
+
     engine.startCalculations()
 
 

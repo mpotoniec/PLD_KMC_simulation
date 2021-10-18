@@ -19,7 +19,8 @@ class Engine():
 
         self.__parameters = KMCmodel.parameters.Parameters()
         self.__space = KMCmodel.space.Space(KMCmodel.size3D.Size3D(self.__parameters.space_size, self.__parameters.space_size, self.__parameters.space_size))
-        self.__adsorptionList = np.empty((self.__space.size.width * self.__space.size.depth),dtype=KMCmodel.adsorption.Adsorption,order='C')
+        #self.__adsorptionList = np.empty((self.__space.size.width * self.__space.size.depth),dtype=KMCmodel.adsorption.Adsorption,order='C')
+        self.__adsorptionList = [None for _ in range(self.__space.size.width * self.__space.size.depth)]
         self.__rng = np.random
 
         self.__isComplited = False
@@ -76,10 +77,6 @@ class Engine():
         writerThread.start()
         calculationsThread.join()
         writerThread.join()
-
-        print('Ilość wystąpień adsorpcji:', self.__adsorptionCount, 'oraz dyfuzji', self.__diffusionCount, 'i None', self.__NoneCount)
-        print('Ilość wystąpień wszystkich zdarzeń:', self.__adsorptionCount + self.__diffusionCount + self.__NoneCount)
-        print('Possible Diffusions ilość:', len(self.__space.possibleDiffusions))
         
         finish_time = t.perf_counter()
         print('Zakończenie działania programu w:', round(finish_time - start_time, 2),'[s] ')
@@ -105,7 +102,7 @@ class Engine():
         self.__adsorptionList[index] = KMCmodel.adsorption.Adsorption(cell, self.__parameters.adsorption_probability)
 
     def __cumulatedProbability(self) -> EventsProbability:
-        adsorption_cumulated_probability = self.__parameters.adsorption_probability * self.__adsorptionList.shape[0]
+        adsorption_cumulated_probability = self.__parameters.adsorption_probability * len(self.__adsorptionList)
         diffusion_cumulated_probability = self.__space.cumulated_probability
 
         return self.EventsProbability(diffusion_cumulated_probability, adsorption_cumulated_probability)
@@ -116,7 +113,7 @@ class Engine():
         eventTypePointer = events_probability.all * rng_value
         
         if eventTypePointer <= events_probability.adsorption:
-            return self.__adsorptionList[self.__rng.randint(0, self.__adsorptionList.shape[0])]
+            return self.__adsorptionList[self.__rng.randint(0, len(self.__adsorptionList))]
         else:
             diffusionPointer = events_probability.diffusion * self.__rng.random_sample()
             diffusion_probability_sum = 0.
@@ -138,7 +135,7 @@ class Engine():
                 print('Ilość wystąpień adsorpcji:', self.__adsorptionCount, 'oraz dyfuzji', self.__diffusionCount, 'i None', self.__NoneCount)
                 print('Ilość wystąpień wszystkich zdarzeń:', self.__adsorptionCount + self.__diffusionCount + self.__NoneCount)
                 print('Possible Diffusions ilość:', len(self.__space.possibleDiffusions))
-                print('Ilość zdarzeń adsorpcji: ', self.__adsorptionList.shape[0])
+                print('Ilość zdarzeń adsorpcji: ', len(self.__adsorptionList))
                 print('Ilość dodanych target dyfuzji do adsorptionList:', self.__diffusion_adsorption_add_targetCount)
                 print('Ilość dodanych origin dyfuzji do adsorptionList:', self.__diffusion_adsorption_add_originCount)
 
@@ -157,9 +154,9 @@ class Engine():
             self.__space.cells_setColor(cell.x, cell.y, cell.z, cell.color)
 
             adsEv = KMCmodel.adsorption.Adsorption(self.__space.cells[cell.x, cell.y + 1, cell.z], self.__parameters.adsorption_probability)
-            self.__adsorptionList[self.__adsorptionList == event] = adsEv
-            #event.cell = self.__space.cells[cell.x, cell.y + 1, cell.z]
-
+            #self.__adsorptionList[self.__adsorptionList == event] = adsEv
+            #event = adsEv
+            self.__adsorptionList[self.__adsorptionList.index(event)] = adsEv
 
 
 
@@ -182,7 +179,7 @@ class Engine():
 
             #Change adsorption of target cell
             adsEv_target_index = None
-            for i in range(self.__adsorptionList.shape[0]):
+            for i in range(len(self.__adsorptionList)):
                 if self.__adsorptionList[i].cell == target:
                     adsEv_target_index = i
                     break
@@ -195,14 +192,11 @@ class Engine():
                     self.__isComplited = True
                     return 0
                 
-                #adsEv_target = KMCmodel.adsorption.Adsorption(self.__space.cells[baceCell_target.x, baceCell_target.y + 1, baceCell_target.z], self.__parameters.adsorption_probability)
                 self.__adsorptionList[adsEv_target_index] = KMCmodel.adsorption.Adsorption(self.__space.cells[baceCell_target.x, baceCell_target.y + 1, baceCell_target.z], self.__parameters.adsorption_probability)
-                #self.__adsorptionList[adsEv_target_index].cell = self.__space.cells[baceCell_target.x, baceCell_target.y + 1, baceCell_target.z]
 
             #Change adsorption of origin cell
             adsEv_origin_index = None
-            for j in range(self.__adsorptionList.shape[0]):
-                #if self.__adsorptionList[j].cell == origin:
+            for j in range(len(self.__adsorptionList)):
                 if self.__adsorptionList[j].cell.x == origin.x and self.__adsorptionList[j].cell.y == origin.y + 1 and self.__adsorptionList[j].cell.z == origin.z:
                     adsEv_origin_index = j
                     break
@@ -211,9 +205,7 @@ class Engine():
                 self.__diffusion_adsorption_add_originCount+=1
                 baceCell_origin = origin
  
-                #adsEv = KMCmodel.adsorption.Adsorption(self.__space.cells[baceCell_origin.x, baceCell_origin.y - 1, baceCell_origin.z], self.__parameters.adsorption_probability)
                 self.__adsorptionList[adsEv_origin_index] = KMCmodel.adsorption.Adsorption(self.__space.cells[baceCell_origin.x, baceCell_origin.y, baceCell_origin.z], self.__parameters.adsorption_probability)
-                #self.__adsorptionList[adsEv_origin_index].cell = self.__space.cells[baceCell_origin.x, baceCell_origin.y - 1, baceCell_origin.z]
             
 
 
@@ -226,8 +218,6 @@ class Engine():
         return 0
 
     def __makeCalculations(self) -> None:
-
-        #time = 0
 
         self.__prepareCalculations()
 

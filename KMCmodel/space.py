@@ -1,4 +1,3 @@
-from numpy.lib.function_base import diff
 import KMCmodel.size3D
 import KMCmodel.cell
 import KMCmodel.diffusion
