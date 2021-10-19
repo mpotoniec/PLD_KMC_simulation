@@ -5,19 +5,19 @@ import KMCmodel.cell
 import KMCmodel.adsorption
 import KMCmodel.diffusion
 
-#import numpy as np
 import threading
 import datetime
 import platform
 import random
 
-import time as t
+import time
 
 class Engine():
     def __init__(self) -> None:
-        start_time = t.perf_counter()
+        start_time = time.perf_counter()
 
         self.__parameters = KMCmodel.parameters.Parameters()
+        print('Parametry symulacji to: Rozmiar przestrzeni =', self.__parameters.space_size, 'Temperatura =', self.__parameters.substrate_temperature)
         self.__space = KMCmodel.space.Space(KMCmodel.size3D.Size3D(self.__parameters.space_size, self.__parameters.space_size, self.__parameters.space_size))
         self.__adsorptionList = [None for _ in range(self.__space.size.width * self.__space.size.depth)]
         self.__rng = random
@@ -33,8 +33,12 @@ class Engine():
         self.__diffusion_adsorption_add_targetCount = 0
         self.__diffusion_adsorption_add_originCount = 0
 
-        finish_time = t.perf_counter()
-        print('Czas działania funkcji init:', round(finish_time - start_time, 2),'[s] ')
+        finish_time = time.perf_counter()
+        to_print_time_sec = str(round(finish_time - start_time, 2)) + '[s]'
+        to_print_time_hmmssms = str(datetime.timedelta(seconds = finish_time - start_time)) + '[h:mm:ss:ms]'
+        print('Czas działania funkcji init (utworzenie przestrzeni do symulacji):', to_print_time_sec, '|', to_print_time_hmmssms)
+
+        self.__initTimeSec = finish_time - start_time
      
 
     class EventsProbability():
@@ -67,7 +71,7 @@ class Engine():
             + '. Prawdopodobieństwo całkowite (ALL): ' + str(self.__all))
 
     def startCalculations(self) -> int:
-        start_time = t.perf_counter()
+        start_time = time.perf_counter()
 
         calculationsThread = threading.Thread(target=self.__makeCalculations)
         writerThread = threading.Thread(target=self.__writer)
@@ -77,8 +81,15 @@ class Engine():
         calculationsThread.join()
         writerThread.join()
         
-        finish_time = t.perf_counter()
-        print('Zakończenie działania programu w:', round(finish_time - start_time, 2),'[s] ')
+        finish_time = time.perf_counter()
+        to_print_time_sec = str(round(finish_time - start_time, 2)) + '[s]'
+        to_print_time_hmmssms = str(datetime.timedelta(seconds = finish_time - start_time)) + '[h:mm:ss:ms]'
+        print('Czas trwania symulacji (bez twrozenia przestrzeni):', to_print_time_sec, '|', to_print_time_hmmssms)
+
+        entire_time_sec = self.__initTimeSec + finish_time - start_time
+        entire_time_hmmssms = str(datetime.timedelta(seconds = entire_time_sec)) + '[h:mm:ss:ms]'
+        entire_time_sec = str(round(entire_time_sec, 2)) + '[s]'
+        print('Czas wykonania całego programu:', entire_time_sec, '|', entire_time_hmmssms)
 
         return 0
 
@@ -130,13 +141,15 @@ class Engine():
             if event.cell.y + 1 > self.__step:
                 self.__step = event.cell.y + 1
                 pr_value = (self.__step * 100) / self.__space.size.height
-                print('Symulacja ukończona w:', pr_value, '%')
-                print('Ilość wystąpień adsorpcji:', self.__adsorptionCount, 'oraz dyfuzji', self.__diffusionCount, 'i None', self.__NoneCount)
-                print('Ilość wystąpień wszystkich zdarzeń:', self.__adsorptionCount + self.__diffusionCount + self.__NoneCount)
-                print('Possible Diffusions ilość:', len(self.__space.possibleDiffusions))
-                print('Ilość zdarzeń adsorpcji: ', len(self.__adsorptionList))
-                print('Ilość dodanych target dyfuzji do adsorptionList:', self.__diffusion_adsorption_add_targetCount)
-                print('Ilość dodanych origin dyfuzji do adsorptionList:', self.__diffusion_adsorption_add_originCount)
+                pr_value = round(pr_value, 1)
+                to_print_value = str(pr_value) + '%'
+                print('Symulacja ukończona w:', to_print_value)
+                #print('Ilość wystąpień adsorpcji:', self.__adsorptionCount, 'oraz dyfuzji', self.__diffusionCount, 'i None', self.__NoneCount)
+                #print('Ilość wystąpień wszystkich zdarzeń:', self.__adsorptionCount + self.__diffusionCount + self.__NoneCount)
+                #print('Possible Diffusions ilość:', len(self.__space.possibleDiffusions))
+                #print('Ilość zdarzeń adsorpcji: ', len(self.__adsorptionList))
+                #print('Ilość dodanych target dyfuzji do adsorptionList:', self.__diffusion_adsorption_add_targetCount)
+                #print('Ilość dodanych origin dyfuzji do adsorptionList:', self.__diffusion_adsorption_add_originCount)
 
         if isinstance(event, KMCmodel.adsorption.Adsorption): #ADSORPCJA
             self.__adsorptionCount+=1
@@ -267,7 +280,7 @@ class Engine():
         while self.__isComplited == False:
 
             if timePointer >= self.__time:
-                t.sleep(0.05)
+                time.sleep(0.05)
                 continue
             
             timePointer += 10

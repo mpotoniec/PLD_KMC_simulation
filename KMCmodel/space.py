@@ -7,20 +7,16 @@ import random
 
 class Space():
     def __init__(self, size: KMCmodel.size3D.Size3D) -> None:
-        '''sadsa'''
         self.__size = size
         self.__cells = tuple(tuple(tuple(KMCmodel.cell.Cell(x, y, z) for z in range(self.__size.depth)) for y in range(self.__size.height)) for x in range(self.__size.width))
-
-        self.__unique_colors = []
-
         self.__allDiffusions = [[[[None for _ in range((9 + 8))] for _ in range(self.__size.depth)] for _ in range(self.__size.height)] for _ in range(self.__size.width)]
         self.__possibleDiffusions = []
+        self.__unique_colors = []
+
         self.__cumulated_probability = 0.
 
         self.getTransparentColor()
         self.__createCells()
-
-        print("Done.")
 
     def __createCells(self):
         #for i in range(self.__size.width):

@@ -17,8 +17,8 @@ def main():
         print('Nieznana maszyna')
         return -1
 
-    print('Program do symulacji Napylania laserowego PLD metodą Kinetic Monte Carlo')
-    print('Obecna maszyna to:',platform.platform())
+    #print('Program do symulacji Napylania laserowego PLD metodą Kinetic Monte Carlo')
+    #print('Obecna maszyna to:',platform.platform())
     print('Wersja Pythona to')
     print(sys.version)
 

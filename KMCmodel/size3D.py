@@ -1,8 +1,5 @@
-'''ads'''
-
 class Size3D():
     def __init__(self,width,height,depth) -> None:
-        '''asds'''
         self.__width = width
         self.__height = height
         self.__depth = depth

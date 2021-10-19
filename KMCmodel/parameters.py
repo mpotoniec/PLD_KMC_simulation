@@ -1,8 +1,7 @@
-
 class Parameters():
     def __init__(self) -> None:
-        self.__space_size = 10 #70
-        self.__substrate_temperature = 2500
+        self.__space_size = 35 #70
+        self.__substrate_temperature = 300
         self.__melting_temperature = 2930
         self.__boltzman_constant = 8.617333262 * 10e-5
         self.__vibration_frequency = 1e13
