@@ -1,0 +1,12 @@
+space_size = 30
+substrate_temperature = 300
+melting_temperature = 2930
+boltzman_constant = 8.617333262 * 10e-5
+vibration_frequency = 1e13
+n = 1
+energyAA = 0.8
+energy_vapour = 1000
+deposition_rate_diffusion = 0.05
+cell_dim = 1e-9
+nano_second = 1e-9
+deposition_rate = 90.0e-9 / 1800.0

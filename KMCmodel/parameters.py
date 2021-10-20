@@ -1,18 +1,51 @@
 class Parameters():
     def __init__(self) -> None:
-        self.__space_size = 35 #70
-        self.__substrate_temperature = 300
+        parameters = []
+        file = open('KMCmodel/parameters.txt', 'r')
+        for line in file:
+            line = line.split('=')
+
+            value = ''
+            if line[0] == 'space_size ': value = int(line[1])
+            elif line[0] == 'boltzman_constant ':
+                line = line[1].split('*')
+                value = float(line[0]) * float(line[1])
+            elif line[0] == 'deposition_rate ': 
+                line = line[1].split('/')
+                value = float(line[0]) / float(line[1])
+            else: value = float(line[1])
+
+            parameters.append(value)
+        file.close()
+
+        self.__space_size = parameters[0]
+        self.__substrate_temperature = int(parameters[1])
+        self.__melting_temperature = int(parameters[2])
+        self.__boltzman_constant = parameters[3]
+        self.__vibration_frequency = parameters[4]
+        self.__n = int(parameters[5])
+        self.__energyAA = parameters[6]
+        self.__energy_vapour = parameters[7]
+        self.__deposition_rate_diffusion = parameters[8]
+        self.__cell_dim = parameters[9]
+        self.__nano_second = parameters[10]
+
+        self.__deposition_rate = parameters[11]
+
+
+        '''self.__space_size = 30 #70
+        self.__substrate_temperature = 700
         self.__melting_temperature = 2930
         self.__boltzman_constant = 8.617333262 * 10e-5
         self.__vibration_frequency = 1e13
         self.__n = 1
         self.__energyAA = 0.8
-        self.__energy_vapour = 1000
+        self.__energy_vapour = 1000.0
         self.__deposition_rate_diffusion = 0.05
         self.__cell_dim = 1e-9
         self.__nano_second = 1e-9
 
-        self.__deposition_rate = 90.0e-9 / 1800.0
+        self.__deposition_rate = 90.0e-9 / 1800.0'''
 
         self.__adsorption_probability = self.__deposition_rate / self.__cell_dim
         self.__Tr = self.__substrate_temperature

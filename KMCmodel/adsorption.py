@@ -1,9 +1,7 @@
 import KMCmodel.cell
-import KMCmodel.parameters
 
 class Adsorption():
     def __init__(self, cell: KMCmodel.cell.Cell, adsorption_probability) -> None:
-        #super().__init__()
         self.__cell = cell
         self.__probability = adsorption_probability
 

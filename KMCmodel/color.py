@@ -1,5 +1,5 @@
 class Color():
-    def __init__(self,R,G,B,A) -> None:
+    def __init__(self, R, G, B, A) -> None:
         self.__R = R
         self.__G = G
         self.__B = B

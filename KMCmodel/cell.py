@@ -1,21 +1,20 @@
-from collections import Counter
-
-import KMCmodel.parameters
 import KMCmodel.color
 import KMCmodel.diffusion
 
+from collections import Counter
+
 class Cell():
-    def __init__(self, x, y, z) -> None:
+    def __init__(self, x, y, z, energyAA) -> None:
         self.__x = x
         self.__y = y
         self.__z = z
         self.__color = KMCmodel.color.Color(0,0,0,0)
         self.__energy = 0
 
-        #self.__neighbourhood = np.empty((26), dtype=Cell, order='C')
         self.__neighbourhood = [None for _ in range(26)]
 
-        self.__energyAA = KMCmodel.parameters.Parameters().energyAA
+        #self.__energyAA = KMCmodel.parameters.Parameters().energyAA
+        self.__energyAA = energyAA
 
     def getMostPopularColorInNeighbourhood(self):
         colors = []

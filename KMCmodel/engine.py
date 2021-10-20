@@ -18,12 +18,14 @@ class Engine():
 
         self.__parameters = KMCmodel.parameters.Parameters()
         print('Parametry symulacji to: Rozmiar przestrzeni =', self.__parameters.space_size, 'Temperatura =', self.__parameters.substrate_temperature)
-        self.__space = KMCmodel.space.Space(KMCmodel.size3D.Size3D(self.__parameters.space_size, self.__parameters.space_size, self.__parameters.space_size))
+        self.__space = KMCmodel.space.Space(self.__parameters)
         self.__adsorptionList = [None for _ in range(self.__space.size.width * self.__space.size.depth)]
         self.__rng = random
-
         self.__isComplited = False
         self.__time = 0
+
+
+
 
         self.__step = 0
         self.__adsorptionCount = 0
@@ -32,6 +34,8 @@ class Engine():
 
         self.__diffusion_adsorption_add_targetCount = 0
         self.__diffusion_adsorption_add_originCount = 0
+
+
 
         finish_time = time.perf_counter()
         to_print_time_sec = str(round(finish_time - start_time, 2)) + '[s]'
@@ -73,12 +77,14 @@ class Engine():
     def startCalculations(self) -> int:
         start_time = time.perf_counter()
 
-        calculationsThread = threading.Thread(target=self.__makeCalculations)
+        #calculationsThread = threading.Thread(target=self.__makeCalculations)
         writerThread = threading.Thread(target=self.__writer)
-
-        calculationsThread.start()
         writerThread.start()
-        calculationsThread.join()
+
+        #calculationsThread.start()
+        #calculationsThread.join()
+
+        self.__makeCalculations()
         writerThread.join()
         
         finish_time = time.perf_counter()
@@ -166,8 +172,6 @@ class Engine():
             self.__space.cells_setColor(cell.x, cell.y, cell.z, cell.color)
 
             adsEv = KMCmodel.adsorption.Adsorption(self.__space.cells[cell.x][cell.y + 1][cell.z], self.__parameters.adsorption_probability)
-            #self.__adsorptionList[self.__adsorptionList == event] = adsEv
-            #event = adsEv
             self.__adsorptionList[self.__adsorptionList.index(event)] = adsEv
 
 
@@ -222,7 +226,7 @@ class Engine():
             #        break
 
             try:
-                tmp_cell = KMCmodel.cell.Cell(origin.x, origin.y + 1, origin.z)
+                tmp_cell = KMCmodel.cell.Cell(origin.x, origin.y + 1, origin.z, self.__parameters.energyAA)
                 tmp_origin_ads = KMCmodel.adsorption.Adsorption(tmp_cell, self.__parameters.adsorption_probability) 
                 adsEv_origin_index = self.__adsorptionList.index(tmp_origin_ads)
                 

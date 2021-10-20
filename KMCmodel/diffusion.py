@@ -1,19 +1,20 @@
-from KMCmodel.parameters import Parameters
 import KMCmodel.cell
-import KMCmodel.parameters
 
 import math
 
 class Diffusion():
-    def __init__(self, originCell, targetCell) -> None:
+    def __init__(self, originCell, targetCell, kT, Tn, attempt_rate, deposition_rate_diffusion, cell_dim, nano_second) -> None:
         
         self.__probability = 0
         self.__originCell: KMCmodel.cell.Cell = originCell
         self.__targetCell: KMCmodel.cell.Cell = targetCell
 
-        self.__parameters = KMCmodel.parameters.Parameters()
-
-    #TODO zrobić overide int czy coś tam
+        self.__kT = kT
+        self.__Tn = Tn
+        self.__attempt_rate = attempt_rate
+        self.__deposition_rate_diffusion = deposition_rate_diffusion
+        self.__cell_dim = cell_dim
+        self.__nano_second = nano_second
 
     def calculateProbability(self, cumulated_probability):
         cumulated_probability -= self.__probability
@@ -26,10 +27,15 @@ class Diffusion():
             self.__probability = 0
             return cumulated_probability
 
-        energyDiff = self.__targetCell.energy - self.__originCell.energy
+        '''energyDiff = self.__targetCell.energy - self.__originCell.energy
         expParam = -energyDiff / self.__parameters.kT
         self.__probability = self.__parameters.Tn * self.__parameters.attempt_rate * math.exp(expParam)
-        self.__probability = self.__probability / (self.__parameters.deposition_rate_diffusion / (self.__parameters.cell_dim * self.__parameters.nano_second))
+        self.__probability = self.__probability / (self.__parameters.deposition_rate_diffusion / (self.__parameters.cell_dim * self.__parameters.nano_second))'''
+
+        energyDiff = self.__targetCell.energy - self.__originCell.energy
+        expParam = -energyDiff / self.__kT
+        self.__probability = self.__Tn * self.__attempt_rate * math.exp(expParam)
+        self.__probability = self.__probability / (self.__deposition_rate_diffusion / (self.__cell_dim * self.__nano_second))
 
         cumulated_probability += self.__probability
 

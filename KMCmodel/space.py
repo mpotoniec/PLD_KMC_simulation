@@ -6,9 +6,10 @@ import KMCmodel.color
 import random
 
 class Space():
-    def __init__(self, size: KMCmodel.size3D.Size3D) -> None:
-        self.__size = size
-        self.__cells = tuple(tuple(tuple(KMCmodel.cell.Cell(x, y, z) for z in range(self.__size.depth)) for y in range(self.__size.height)) for x in range(self.__size.width))
+    def __init__(self, parameters) -> None:
+        self.__parameters = parameters
+        self.__size = KMCmodel.size3D.Size3D(self.__parameters.space_size, self.__parameters.space_size, self.__parameters.space_size)
+        self.__cells = tuple(tuple(tuple(KMCmodel.cell.Cell(x, y, z, self.__parameters.energyAA) for z in range(self.__size.depth)) for y in range(self.__size.height)) for x in range(self.__size.width))
         self.__allDiffusions = [[[[None for _ in range((9 + 8))] for _ in range(self.__size.depth)] for _ in range(self.__size.height)] for _ in range(self.__size.width)]
         self.__possibleDiffusions = []
         self.__unique_colors = []
@@ -16,13 +17,6 @@ class Space():
         self.__cumulated_probability = 0.
 
         self.getTransparentColor()
-        self.__createCells()
-
-    def __createCells(self):
-        #for i in range(self.__size.width):
-        #    for j in range(self.__size.height):
-        #        for k in range(self.__size.depth):
-        #            self.__cells[i, j, k] = KMCmodel.cell.Cell(i, j, k)
         self.__makeNeighbours()
 
     def __makeNeighbours(self):
@@ -63,7 +57,7 @@ class Space():
                                 b = self.__mathMod(j + y, self.__size.height)
                                 c = self.__mathMod(k + z, self.__size.depth)
 
-                                self.__allDiffusions[i][j][k][neighbour] = KMCmodel.diffusion.Diffusion(self.__cells[i][j][k], self.__cells[a][b][c])
+                                self.__allDiffusions[i][j][k][neighbour] = KMCmodel.diffusion.Diffusion(self.__cells[i][j][k], self.__cells[a][b][c], self.__parameters.kT, self.__parameters.Tn, self.__parameters.attempt_rate, self.__parameters.deposition_rate_diffusion, self.__parameters.cell_dim, self.__parameters.nano_second)
                                 neighbour+=1
                                 
     def __mathMod(self, a, b):
@@ -94,7 +88,6 @@ class Space():
 
 
     def getColorAtIndex(self,index):
-        '''Method returns color under given index'''
         return self.__unique_colors[index]
 
     def getIndexOfColor(self,given_color):
@@ -105,12 +98,10 @@ class Space():
         return self.__unique_colors.index(given_color)
     
     def getTransparentColor(self):
-        '''Method creates unique transparent color.'''
         transparent = KMCmodel.color.Color(0, 0, 0, 0)
         self.__unique_colors.append(transparent)
 
     def getNewColor(self) -> int:
-        '''Method creating new random color.'''
         #R = np.ubyte(np.random.randint(0,255))
         #B = np.ubyte(np.random.randint(0,255))
         #G = np.ubyte(np.random.randint(0,255))
