@@ -1,5 +1,5 @@
-space_size = 30
-substrate_temperature = 300
+space_size = 10
+substrate_temperature = 700
 melting_temperature = 2930
 boltzman_constant = 8.617333262 * 10e-5
 vibration_frequency = 1e13

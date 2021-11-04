@@ -13,6 +13,7 @@ import random
 import time
 
 class Engine():
+    #@profile
     def __init__(self) -> None:
         start_time = time.perf_counter()
 
@@ -74,18 +75,17 @@ class Engine():
             + '. Prawdopodobieństwo dyfuzji: ' + str(self.__diffusion)
             + '. Prawdopodobieństwo całkowite (ALL): ' + str(self.__all))
 
+    #@profile
     def startCalculations(self) -> int:
         start_time = time.perf_counter()
 
-        #calculationsThread = threading.Thread(target=self.__makeCalculations)
-        writerThread = threading.Thread(target=self.__writer)
-        writerThread.start()
+        #writerThread = threading.Thread(target=self.__writer) #Wykonanie zapisu do pliku w osobnym wątku.
+        #writerThread.start() #Uruchomienie wątku do zapisu do pliku.
 
-        #calculationsThread.start()
-        #calculationsThread.join()
+        #self.__makeCalculations() #Wykonanie obliczeń w głównym wątku.
+        #writerThread.join() #Zakończenie działania wątku do zapisu do pliku.
 
-        self.__makeCalculations()
-        writerThread.join()
+        self.__makeCalculations_writer_on_main_thread() #Wykonanie obliczeń oraz zapisu w głównym wątku.
         
         finish_time = time.perf_counter()
         to_print_time_sec = str(round(finish_time - start_time, 2)) + '[s]'
@@ -266,6 +266,50 @@ class Engine():
             #self.printstate()
         #self.printstate()
 
+    def __makeCalculations_writer_on_main_thread(self) -> None:
+
+        self.__prepareCalculations()
+
+        if platform.system() == 'Linux':
+            name = 'Results/output'+ str(datetime.datetime.now()).split('.')[0] + '.dump'
+
+        elif platform.system() == 'Windows':
+            name = 'Results/output'+ str(datetime.datetime.now()).split('.')[0] + '.dump'
+            name_tab = name.split(':')
+            name = ''
+            for char in name_tab:
+                name += char
+  
+        file = open(name, 'w')
+
+        timePointer = 0
+        times = []
+
+        while(not self.__isComplited):
+
+            propabilitySums = self.__cumulatedProbability()
+            self.__handleEvent(self.__findEvent(propabilitySums))
+
+            self.__time += 1 / propabilitySums.all
+
+            if timePointer >= self.__time:
+                continue
+            else:
+                timePointer += 10
+                start_time = time.perf_counter()
+                self.__writer_for_main_thread(file)
+                stop_time = time.perf_counter()
+                times.append(stop_time - start_time)            
+        
+        file.close()
+
+        avarage_sec = sum(times)/len(times)
+        avarage_hmmssms = str(datetime.timedelta(seconds = avarage_sec)) + '[h:mm:ss:ms]'
+        avarage_sec = str(round(avarage_sec, 2)) + '[s]'
+
+        print('Liczba zapisów =', len(times), 'Sredni czas zapisu =', avarage_sec, '|', avarage_hmmssms)
+
+
     def __writer(self) -> None:
         if platform.system() == 'Linux':
             name = 'Results/output'+ str(datetime.datetime.now()).split('.')[0] + '.dump'
@@ -281,6 +325,7 @@ class Engine():
 
         timePointer = 0
 
+        times = []
         while self.__isComplited == False:
 
             if timePointer >= self.__time:
@@ -289,6 +334,8 @@ class Engine():
             
             timePointer += 10
 
+            start_time = time.perf_counter()
+            
             file.write("ITEM: TIMESTEP\n")
             file.write(str(self.__time)+'\n')
             file.write("ITEM: NUMBER OF ATOMS\n")
@@ -313,8 +360,47 @@ class Engine():
                         str(1 - cell.color.A / 255)    + " " +
                         str(id(cell.color))            + "\n")
 
+            stop_time = time.perf_counter()
+            times.append(stop_time - start_time)
+
         file.close()
 
+        '''to_print_time_sec = str(round(finish_time - start_time, 2)) + '[s]'
+        to_print_time_hmmssms = str(datetime.timedelta(seconds = finish_time - start_time)) + '[h:mm:ss:ms]'
+        print('Czas działania funkcji init (utworzenie przestrzeni do symulacji):', to_print_time_sec, '|', to_print_time_hmmssms)'''
+        
+        avarage_sec = sum(times)/len(times)
+        avarage_hmmssms = str(datetime.timedelta(seconds = avarage_sec)) + '[h:mm:ss:ms]'
+        avarage_sec = str(round(avarage_sec, 2)) + '[s]'
+
+
+        print('Liczba zapisów =', len(times), 'Sredni czas zapisu =', avarage_sec, '|', avarage_hmmssms)
+        
+    def __writer_for_main_thread(self, file) -> None:
+            
+        file.write("ITEM: TIMESTEP\n")
+        file.write(str(self.__time)+'\n')
+        file.write("ITEM: NUMBER OF ATOMS\n")
+        file.write(str(self.__space.size.volume_size)+'\n')
+        file.write("ITEM: BOX BOUNDS pp pp pp\n")
+        file.write("0 " + str(self.__space.size.width)+'\n')
+        file.write("0 " + str(self.__space.size.height)+'\n')
+        file.write("0 " + str(self.__space.size.depth)+'\n')
+        file.write("ITEM: ATOMS id x y z R G B A column_id\n")
+
+        for cell_tab in self.__space.cells:
+            for cell_tab2 in cell_tab:
+                for cell in cell_tab2:
+                
+                    file.write(str(id(cell))       + " " +
+                    str(cell.x + 0.5)              + " " +
+                    str(cell.z + 0.5)              + " " +
+                    str(cell.y + 0.5)              + " " +
+                    str(cell.color.R / 255.0)      + " " +
+                    str(cell.color.G / 255.0)      + " " +
+                    str(cell.color.B / 255.0)      + " " +
+                    str(1 - cell.color.A / 255)    + " " +
+                    str(id(cell.color))            + "\n")
 
 
 

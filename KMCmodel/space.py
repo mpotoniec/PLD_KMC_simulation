@@ -6,6 +6,7 @@ import KMCmodel.color
 import random
 
 class Space():
+    #@profile
     def __init__(self, parameters) -> None:
         self.__parameters = parameters
         self.__size = KMCmodel.size3D.Size3D(self.__parameters.space_size, self.__parameters.space_size, self.__parameters.space_size)
@@ -19,6 +20,7 @@ class Space():
         self.getTransparentColor()
         self.__makeNeighbours()
 
+    #@profile
     def __makeNeighbours(self):
         for i in range(self.__size.width):
             for j in range(self.__size.height):
