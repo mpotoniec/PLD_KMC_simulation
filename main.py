@@ -7,7 +7,6 @@ import os
 import KMCmodel.engine
 import KMCmodel.parameters
 
-
 def main():
 
     print(os.getpid())
