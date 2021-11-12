@@ -14,10 +14,11 @@ import time
 
 class Engine():
     #@profile
-    def __init__(self) -> None:
+    def __init__(self, parameters) -> None:
         start_time = time.perf_counter()
 
-        self.__parameters = KMCmodel.parameters.Parameters()
+        self.__parameters = parameters
+        #self.__parameters = KMCmodel.parameters.Parameters()
         print('Parametry symulacji to: Rozmiar przestrzeni =', self.__parameters.space_size, 'Temperatura =', self.__parameters.substrate_temperature)
         self.__space = KMCmodel.space.Space(self.__parameters)
         self.__adsorptionList = [None for _ in range(self.__space.size.width * self.__space.size.depth)]

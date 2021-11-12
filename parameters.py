@@ -1,7 +1,7 @@
 class Parameters():
     def __init__(self) -> None:
-        parameters = []
-        file = open('KMCmodel/parameters.txt', 'r')
+        '''parameters = []
+        file = open('parameters.txt', 'r')
         for line in file:
             line = line.split('=')
 
@@ -18,7 +18,7 @@ class Parameters():
             parameters.append(value)
         file.close()
 
-        '''self.__space_size = parameters[0]
+        self.__space_size = parameters[0]
         self.__substrate_temperature = int(parameters[1])
         self.__melting_temperature = int(parameters[2])
         self.__boltzman_constant = parameters[3]
@@ -33,7 +33,7 @@ class Parameters():
         self.__deposition_rate = parameters[11]'''
 
 
-        self.__space_size = 30 #70
+        self.__space_size = 10 #70
         self.__substrate_temperature = 700
         self.__melting_temperature = 2930
         self.__boltzman_constant = 8.617333262 * 10e-5
@@ -46,6 +46,28 @@ class Parameters():
         self.__nano_second = 1e-9
 
         self.__deposition_rate = 90.0e-9 / 1800.0
+
+        self.__adsorption_probability = self.__deposition_rate / self.__cell_dim
+        self.__Tr = self.__substrate_temperature
+        self.__Tn = pow(self.__Tr, self.__n)
+        self.__kT = self.__Tr * self.__boltzman_constant
+        self.__attempt_rate = self.__vibration_frequency
+
+    def create_new_parameters(self,space_size,substrate_temperature,melting_temperature,boltzman_constant,vibration_frequency,n,energyAA,
+    energy_vapour,deposition_rate_diffusion,cell_dim,nano_second,deposition_rate):
+        self.__space_size = int(space_size)
+        self.__substrate_temperature = int(substrate_temperature)
+        self.__melting_temperature = int(melting_temperature)
+        self.__boltzman_constant = float(boltzman_constant)
+        self.__vibration_frequency = float(vibration_frequency)
+        self.__n = int(n)
+        self.__energyAA = float(energyAA)
+        self.__energy_vapour = float(energy_vapour)
+        self.__deposition_rate_diffusion = float(deposition_rate_diffusion)
+        self.__cell_dim = float(cell_dim)
+        self.__nano_second = float(nano_second)
+
+        self.__deposition_rate = float(deposition_rate)
 
         self.__adsorption_probability = self.__deposition_rate / self.__cell_dim
         self.__Tr = self.__substrate_temperature
