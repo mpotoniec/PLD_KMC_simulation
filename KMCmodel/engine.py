@@ -43,6 +43,7 @@ class Engine():
         to_print_time_sec = str(round(finish_time - start_time, 2)) + '[s]'
         to_print_time_hmmssms = str(datetime.timedelta(seconds = finish_time - start_time)) + '[h:mm:ss:ms]'
         print('Czas działania funkcji init (utworzenie przestrzeni do symulacji):', to_print_time_sec, '|', to_print_time_hmmssms)
+        print('')
 
         self.__initTimeSec = finish_time - start_time
      
@@ -80,6 +81,12 @@ class Engine():
     def startCalculations(self) -> int:
         start_time = time.perf_counter()
 
+
+
+
+
+
+        #WYKONANIE SUMULACJI ZAPIS DO PLIKU ITP.
         #writerThread = threading.Thread(target=self.__writer) #Wykonanie zapisu do pliku w osobnym wątku.
         #writerThread.start() #Uruchomienie wątku do zapisu do pliku.
 
@@ -87,16 +94,50 @@ class Engine():
         #writerThread.join() #Zakończenie działania wątku do zapisu do pliku.
 
         self.__makeCalculations_writer_on_main_thread() #Wykonanie obliczeń oraz zapisu w głównym wątku.
-        
+        #WYKONANIE SUMULACJI ZAPIS DO PLIKU ITP.
+
+
+
+
+
+
+
+        #MIERZENIE I PRZETWARZANIE CZASU DO WYPISANIA.
         finish_time = time.perf_counter()
         to_print_time_sec = str(round(finish_time - start_time, 2)) + '[s]'
         to_print_time_hmmssms = str(datetime.timedelta(seconds = finish_time - start_time)) + '[h:mm:ss:ms]'
-        print('Czas trwania symulacji (bez twrozenia przestrzeni):', to_print_time_sec, '|', to_print_time_hmmssms)
 
         entire_time_sec = self.__initTimeSec + finish_time - start_time
         entire_time_hmmssms = str(datetime.timedelta(seconds = entire_time_sec)) + '[h:mm:ss:ms]'
         entire_time_sec = str(round(entire_time_sec, 2)) + '[s]'
+        #MIERZENIE I PRZETWARZANIE CZASU DO WYPISANIA.
+
+
+
+
+
+
+        #WYPISANIE STATYSTYK ZJAWISK WYSTĘPUJĄCYCH W SYMULACJI.
+        print('')
+        print('Ilość wystąpień adsorpcji:', self.__adsorptionCount, 'oraz dyfuzji', self.__diffusionCount, 'i None', self.__NoneCount)
+        print('Ilość wystąpień wszystkich zdarzeń:', self.__adsorptionCount + self.__diffusionCount + self.__NoneCount)
+        print('Possible Diffusions ilość:', len(self.__space.possibleDiffusions))
+        print('Ilość zdarzeń adsorpcji: ', len(self.__adsorptionList))
+        print('Ilość dodanych target dyfuzji do adsorptionList:', self.__diffusion_adsorption_add_targetCount)
+        print('Ilość dodanych origin dyfuzji do adsorptionList:', self.__diffusion_adsorption_add_originCount)
+        print('')
+        #WYPISANIE STATYSTYK ZJAWISK WYSTĘPUJĄCYCH W SYMULACJI.
+
+
+
+
+
+
+
+        #WYPISANIE CZASU WYKONANIA PROGRAMU.
+        print('Czas trwania symulacji (bez twrozenia przestrzeni):', to_print_time_sec, '|', to_print_time_hmmssms)
         print('Czas wykonania całego programu:', entire_time_sec, '|', entire_time_hmmssms)
+        #WYPISANIE CZASU WYKONANIA PROGRAMU.
 
         return 0
 

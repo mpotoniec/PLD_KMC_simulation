@@ -19,6 +19,7 @@ class Space():
 
         self.getTransparentColor()
         self.__makeNeighbours()
+        #self.print_diffusions()
 
     #@profile
     def __makeNeighbours(self):
@@ -128,6 +129,12 @@ class Space():
         self.__cells[i][j][k].color = color
         self.__allDiffusions_handleChange(i, j, k)
 
+    def print_diffusions(self):
+            for i in range(self.__size.width):
+                for j in range(self.__size.height):
+                    for k in range(self.__size.depth):
+                        for diffusion in self.__allDiffusions[i][j][k]:
+                            print(diffusion)
 
 
     @property
