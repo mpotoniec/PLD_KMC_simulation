@@ -10,15 +10,19 @@ class Space():
     def __init__(self, parameters) -> None:
         self.__parameters = parameters
         self.__size = KMCmodel.size3D.Size3D(self.__parameters.space_size, self.__parameters.space_size, self.__parameters.space_size)
+
         self.__cells = tuple(tuple(tuple(KMCmodel.cell.Cell(x, y, z, self.__parameters.energyAA) for z in range(self.__size.depth)) for y in range(self.__size.height)) for x in range(self.__size.width))
         self.__allDiffusions = [[[[None for _ in range((9 + 8))] for _ in range(self.__size.depth)] for _ in range(self.__size.height)] for _ in range(self.__size.width)]
         self.__possibleDiffusions = []
+        self.__adsorptionList = [None for _ in range(self.__size.width * self.__size.depth)]
         self.__unique_colors = []
 
         self.__cumulated_probability = 0.
 
         self.getTransparentColor()
         self.__makeNeighbours()
+        self.__makeInitialAdsorptions()
+
         #self.print_diffusions()
 
     #@profile
@@ -65,6 +69,13 @@ class Space():
                                 
     def __mathMod(self, a, b):
         return (abs(a * b) + a) % b
+
+    def __makeInitialAdsorptions(self):
+        index = 0
+        for i in range(self.__size.width):
+            for k in range(self.__size.depth):
+                self.__adsorptionList[index] = KMCmodel.adsorption.Adsorption(self.__cells[i][0][k], self.__parameters.adsorption_probability)
+                index+=1
 
     def __allDiffusions_handleChange(self, x, y, z):
 
@@ -152,6 +163,9 @@ class Space():
     @possibleDiffusions.setter
     def possibleDiffusions(self, diffusion):
         self.__possibleDiffusions.append(diffusion)
+    @property
+    def adsorptionList(self):
+        return self.__adsorptionList
     @property
     def cumulated_probability(self):
         return self.__cumulated_probability  
