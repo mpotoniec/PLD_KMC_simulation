@@ -19,11 +19,19 @@ class Diffusion():
     def calculateProbability(self, cumulated_probability):
         cumulated_probability -= self.__probability
 
-        if self.__originCell.color.A == 0:
+        '''if self.__originCell.color.A == 0:
             self.__probability = 0
             return cumulated_probability
 
         if self.__targetCell.color.A != 0:
+            self.__probability = 0
+            return cumulated_probability'''
+
+        if self.__originCell.colorIndex == 0:
+            self.__probability = 0
+            return cumulated_probability
+        
+        if self.__targetCell.colorIndex != 0:
             self.__probability = 0
             return cumulated_probability
 

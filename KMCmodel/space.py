@@ -4,6 +4,7 @@ import KMCmodel.diffusion
 import KMCmodel.color
 
 import random
+from collections import Counter
 
 class Space():
     #@profile
@@ -13,7 +14,6 @@ class Space():
 
         self.__cells = tuple(tuple(tuple(KMCmodel.cell.Cell(x, y, z, self.__parameters.energyAA) for z in range(self.__size.depth)) for y in range(self.__size.height)) for x in range(self.__size.width))
         self.__allDiffusions = [[[[None for _ in range((9 + 8))] for _ in range(self.__size.depth)] for _ in range(self.__size.height)] for _ in range(self.__size.width)]
-        #self.__possibleDiffusions = []
         self.__possibleDiffusions = set()
         self.__adsorptionList = [None for _ in range(self.__size.width * self.__size.depth)]
         self.__unique_colors = []
@@ -70,15 +70,44 @@ class Space():
                                 self.__allDiffusions[i][j][k][neighbour] = KMCmodel.diffusion.Diffusion(self.__cells[i][j][k], self.__cells[a][b][c], self.__parameters.kT, self.__parameters.Tn, self.__parameters.attempt_rate, self.__parameters.deposition_rate_diffusion, self.__parameters.cell_dim, self.__parameters.nano_second)
                                 neighbour+=1
                                 
-    def __mathMod(self, a, b):
-        return (abs(a * b) + a) % b
-
     def __makeInitialAdsorptions(self):
         index = 0
         for i in range(self.__size.width):
             for k in range(self.__size.depth):
                 self.__adsorptionList[index] = KMCmodel.adsorption.Adsorption(self.__cells[i][0][k], self.__parameters.adsorption_probability)
                 index+=1
+
+    def __mathMod(self, a, b):
+        return (abs(a * b) + a) % b
+
+    def __getMostPopularColorInNeighbourhood(self, i, j, k):
+        colorIndexes = []
+        for neighbor in self.__cells[i][j][k].neighbourhood:
+
+            #na kolorach
+            #if self.__space.getColorAtIndex(neighbor.colorIndex).A == 0: continue
+            #colors.append(self.__space.getColorAtIndex(neighbor.colorIndex))
+
+            #na indeksach
+            if neighbor.colorIndex == 0: continue
+            colorIndexes.append(neighbor.colorIndex)
+
+        if len(colorIndexes) != 0: 
+            result = Counter(colorIndexes).most_common()[0][0]
+        
+        else: result = self.getNewColor()
+        
+        return result
+
+    def __calculateEnergyInNeighbourhood(self, i, j, k, colorIndex):
+
+        if self.__cells[i][j][k].colorIndex == 0 and colorIndex != 0:
+            for neighbour in self.__cells[i][j][k].neighbourhood:
+                neighbour.energy += self.__parameters.energyAA
+        elif self.__cells[i][j][k].colorIndex != 0 and colorIndex == 0:
+            for neighbour in self.__cells[i][j][k].neighbourhood:
+                neighbour.energy -= self.__parameters.energyAA
+
 
     def __allDiffusions_handleChange(self, x, y, z):
 
@@ -130,11 +159,44 @@ class Space():
 
 
     def cells_getColor(self, i, j, k):
-        return self.__cells[i][j][k].color
+        #return self.__cells[i][j][k].colorIndex
+        return self.__unique_colors[self.__cells[i][j][k].colorIndex]
 
-    def cells_setColor(self, i, j, k, color):
-        self.__cells[i][j][k].color = color
+    def cells_setColor(self, i, j, k):
+        colorIndex = self.__getMostPopularColorInNeighbourhood(i, j, k)
+        self.__calculateEnergyInNeighbourhood(i, j, k, colorIndex)
+        self.__cells[i][j][k].colorIndex = colorIndex
         self.__allDiffusions_handleChange(i, j, k)
+
+    def cells_setTransparent(self, i, j, k):
+        colorIndex = 0
+        self.__calculateEnergyInNeighbourhood(i, j, k, colorIndex)
+        self.__cells[i][j][k].colorIndex = colorIndex
+        self.__allDiffusions_handleChange(i, j, k)
+
+    @property
+    def size(self):
+        return self.__size   
+    @property
+    def cells(self):
+        return self.__cells
+    @property
+    def allDiffusions(self):
+        return self.__allDiffusions
+    @property
+    def possibleDiffusions(self):
+        return self.__possibleDiffusions
+    @possibleDiffusions.setter
+    def possibleDiffusions(self, diffusion):
+        self.__possibleDiffusions.append(diffusion)
+    @property
+    def adsorptionList(self):
+        return self.__adsorptionList
+    @property
+    def cumulated_probability(self):
+        return self.__cumulated_probability  
+
+
 
     def print_diffusions(self):
             for i in range(self.__size.width):
@@ -164,26 +226,4 @@ class Space():
         print(f'Pamięć danych (RAM)    = {round(data_memory / MB, 2)}[MB] | {round(data_memory / GB, 2)}[GB]')
         print('')
 
-    @property
-    def size(self):
-        return self.__size   
-    @property
-    def cells(self):
-        return self.__cells
-    @property
-    def allDiffusions(self):
-        return self.__allDiffusions
-    @property
-    def possibleDiffusions(self):
-        return self.__possibleDiffusions
-    @possibleDiffusions.setter
-    def possibleDiffusions(self, diffusion):
-        self.__possibleDiffusions.append(diffusion)
-    @property
-    def adsorptionList(self):
-        return self.__adsorptionList
-    @property
-    def cumulated_probability(self):
-        return self.__cumulated_probability  
-    
 #Dokończyć to Texture!!!!

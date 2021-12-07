@@ -35,7 +35,6 @@ class Engine():
         finish_time = time.perf_counter()
         to_print_time_sec = str(round(finish_time - start_time, 2)) + '[s]'
         to_print_time_hmmssms = str(datetime.timedelta(seconds = finish_time - start_time)) + '[h:mm:ss:ms]'
-        print('Czas działania funkcji init (utworzenie przestrzeni do symulacji):', to_print_time_sec, '|', to_print_time_hmmssms)
         #print('')
         self.__initTimeSec = finish_time - start_time
 
@@ -97,7 +96,7 @@ class Engine():
 
 
 
-        '''#MIERZENIE I PRZETWARZANIE CZASU DO WYPISANIA.
+        #MIERZENIE I PRZETWARZANIE CZASU DO WYPISANIA.
         finish_time = time.perf_counter()
         to_print_time_sec = str(round(finish_time - start_time, 2)) + '[s]'
         to_print_time_hmmssms = str(datetime.timedelta(seconds = finish_time - start_time)) + '[h:mm:ss:ms]'
@@ -134,7 +133,7 @@ class Engine():
         print('Czas wykonania całego programu:', entire_time_sec, '|', entire_time_hmmssms)
         #WYPISANIE CZASU WYKONANIA PROGRAMU.
 
-        self.print_memory_ussage('Użycie pamięci po zakończeniu działania programu')'''
+        #self.print_memory_ussage('Użycie pamięci po zakończeniu działania programu')
 
         return 0
 
@@ -190,10 +189,7 @@ class Engine():
                 self.__isComplited = True
                 return 0
 
-            cell.color = cell.getMostPopularColorInNeighbourhood()
-            if cell.color.A == 0:
-                cell.color = self.__space.getColorAtIndex(self.__space.getNewColor())
-            self.__space.cells_setColor(cell.x, cell.y, cell.z, cell.color)
+            self.__space.cells_setColor(cell.x, cell.y, cell.z)
 
             adsEv = KMCmodel.adsorption.Adsorption(self.__space.cells[cell.x][cell.y + 1][cell.z], self.__parameters.adsorption_probability)
             self.__space.adsorptionList[self.__space.adsorptionList.index(event)] = adsEv
@@ -208,13 +204,8 @@ class Engine():
             origin = event.originCell
             target = event.targetCell
 
-            target.color = target.getMostPopularColorInNeighbourhood()
-            if target.color.A == 0:
-                target.color = self.__space.getColorAtIndex(self.__space.getNewColor())
-            self.__space.cells_setColor(target.x, target.y, target.z, target.color)
-            
-            origin.color = self.__space.getColorAtIndex(0)
-            self.__space.cells_setColor(origin.x, origin.y, origin.z, origin.color)
+            self.__space.cells_setColor(target.x, target.y, target.z)
+            self.__space.cells_setTransparent(origin.x, origin.y, origin.z)
 
             #Change adsorption of target cell
             try:
@@ -261,6 +252,8 @@ class Engine():
             return - 1            
 
         return 0
+
+
 
     def __makeCalculations(self) -> None:
 
@@ -317,6 +310,7 @@ class Engine():
         print('Liczba zapisów =', len(times), 'Sredni czas zapisu =', avarage_sec, '|', avarage_hmmssms)
 
 
+
     def __writer(self) -> None:
         if platform.system() == 'Linux':
             name = 'Results/output'+ str(datetime.datetime.now()).split('.')[0] + '.dump'
@@ -356,16 +350,18 @@ class Engine():
             for cell_tab in self.__space.cells:
                 for cell_tab2 in cell_tab:
                     for cell in cell_tab2:
-                
-                        file.write(str(id(cell))            + " " +
-                        str(cell.x + 0.5)                   + " " +
-                        str(cell.z + 0.5)                   + " " +
-                        str(cell.y + 0.5)                   + " " +
-                        str(cell.color.R / 255.0)           + " " +
-                        str(cell.color.G / 255.0)           + " " +
-                        str(cell.color.B / 255.0)           + " " +
-                        str(int(1 - cell.color.A / 255))    + " " +
-                        str(id(cell.color))                 + "\n")
+                        
+                        color = self.__space.cells_getColor(cell.x, cell.y, cell.z)
+
+                        file.write(str(id(cell))       + " " +
+                        str(cell.x + 0.5)              + " " +
+                        str(cell.z + 0.5)              + " " +
+                        str(cell.y + 0.5)              + " " +
+                        str(color.R / 255.0)           + " " +
+                        str(color.G / 255.0)           + " " +
+                        str(color.B / 255.0)           + " " +
+                        str(int(1 - color.A / 255))    + " " +
+                        str(id(color))                 + "\n")
 
             stop_time = time.perf_counter()
             times.append(stop_time - start_time)
@@ -395,15 +391,17 @@ class Engine():
             for cell_tab2 in cell_tab:
                 for cell in cell_tab2:
                 
-                    file.write(str(id(cell))            + " " +
-                    str(cell.x + 0.5)                   + " " +
-                    str(cell.z + 0.5)                   + " " +
-                    str(cell.y + 0.5)                   + " " +
-                    str(cell.color.R / 255.0)           + " " +
-                    str(cell.color.G / 255.0)           + " " +
-                    str(cell.color.B / 255.0)           + " " +
-                    str(int(1 - cell.color.A / 255))    + " " +
-                    str(id(cell.color))                 + "\n")
+                    color = self.__space.cells_getColor(cell.x, cell.y, cell.z)
+
+                    file.write(str(id(cell))       + " " +
+                    str(cell.x + 0.5)              + " " +
+                    str(cell.z + 0.5)              + " " +
+                    str(cell.y + 0.5)              + " " +
+                    str(color.R / 255.0)           + " " +
+                    str(color.G / 255.0)           + " " +
+                    str(color.B / 255.0)           + " " +
+                    str(int(1 - color.A / 255))    + " " +
+                    str(id(color))                 + "\n")
 
 
 

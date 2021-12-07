@@ -8,15 +8,15 @@ class Cell():
         self.__x = x
         self.__y = y
         self.__z = z
-        self.__color = KMCmodel.color.Color(0,0,0,0)
+        #self.__color = KMCmodel.color.Color(0,0,0,0)
         self.__energy = 0
+        self.__colorIndex = 0
 
         self.__neighbourhood = [None for _ in range(26)]
 
-        #self.__energyAA = KMCmodel.parameters.Parameters().energyAA
         self.__energyAA = energyAA
 
-    def getMostPopularColorInNeighbourhood(self):
+    '''def getMostPopularColorInNeighbourhood(self):
         colors = []
         for cell in self.__neighbourhood:
             if cell.color.A == 0: continue
@@ -26,7 +26,7 @@ class Cell():
             result = Counter(colors).most_common()[0][0]
         else: result = KMCmodel.color.Color(0, 0, 0, 0) 
         
-        return result
+        return result'''
 
 
 
@@ -57,7 +57,7 @@ class Cell():
     @property 
     def neighbourhood(self):
         return self.__neighbourhood
-    @property
+    '''@property
     def color(self):
         return self.__color
     @color.setter
@@ -72,7 +72,15 @@ class Cell():
             for neighbour in self.__neighbourhood:
                 neighbour.energy -= energyAA
 
-        self.__color = color_to_set
+        self.__color = color_to_set'''
+
+    @property
+    def colorIndex(self):
+        return self.__colorIndex
+
+    @colorIndex.setter
+    def colorIndex(self, colorIndex):
+        self.__colorIndex = colorIndex
 
     def __eq__(self, cell: object) -> bool:
         if self.__x == cell.x and self.__y == cell.y and self.__z == cell.z:
