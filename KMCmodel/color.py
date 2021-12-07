@@ -35,8 +35,7 @@ class Color():
         else: return False
 
     def __hash__(self) -> int:
-        #return ((self.__R, self.__G, self.__B, self.__A))
-        return 1
+        return hash((self.__R, self.__G, self.__B, self.__A))
 
     def __str__(self) -> str:
         return (

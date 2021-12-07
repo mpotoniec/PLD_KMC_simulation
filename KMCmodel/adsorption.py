@@ -30,3 +30,6 @@ class Adsorption():
         + str(self.__cell.z) + "]. Z prawdopodowbieństwem: " 
         + str(self.__probability) + ". " 
         + str(self.__cell.color))
+
+    def __hash__(self) -> int:
+        return hash((self.__cell, self.__probability))

@@ -13,7 +13,8 @@ class Space():
 
         self.__cells = tuple(tuple(tuple(KMCmodel.cell.Cell(x, y, z, self.__parameters.energyAA) for z in range(self.__size.depth)) for y in range(self.__size.height)) for x in range(self.__size.width))
         self.__allDiffusions = [[[[None for _ in range((9 + 8))] for _ in range(self.__size.depth)] for _ in range(self.__size.height)] for _ in range(self.__size.width)]
-        self.__possibleDiffusions = []
+        #self.__possibleDiffusions = []
+        self.__possibleDiffusions = set()
         self.__adsorptionList = [None for _ in range(self.__size.width * self.__size.depth)]
         self.__unique_colors = []
 
@@ -24,6 +25,8 @@ class Space():
         self.__makeInitialAdsorptions()
 
         #self.print_diffusions()
+
+        #self.print_memory_ussage('Użycie pamięci w funkcji init space')
 
     #@profile
     def __makeNeighbours(self):
@@ -97,18 +100,16 @@ class Space():
         result = diffusion.calculateProbability(self.__cumulated_probability)
         if result != None: self.__cumulated_probability = result
 
-        if diffusion.probability > 0 and pervous_probability == 0: self.__possibleDiffusions.append(diffusion)
-        elif pervous_probability > 0 and diffusion.probability == 0: self.__possibleDiffusions.remove(diffusion)
+        if diffusion.probability > 0 and pervous_probability == 0: self.__possibleDiffusions.add(diffusion) #self.__possibleDiffusions.append(diffusion)
+        
+        elif pervous_probability > 0 and diffusion.probability == 0: self.__possibleDiffusions.remove(diffusion) #self.__possibleDiffusions.remove(diffusion)
+
 
 
     def getColorAtIndex(self,index):
         return self.__unique_colors[index]
 
     def getIndexOfColor(self,given_color):
-        #index = np.where(self.__unique_colors == given_color)
-        #if len(index[0]) > 0: return index[0][0]
-        #else: return False
-
         return self.__unique_colors.index(given_color)
     
     def getTransparentColor(self):
@@ -116,11 +117,6 @@ class Space():
         self.__unique_colors.append(transparent)
 
     def getNewColor(self) -> int:
-        #R = np.ubyte(np.random.randint(0,255))
-        #B = np.ubyte(np.random.randint(0,255))
-        #G = np.ubyte(np.random.randint(0,255))
-        #A = np.ubyte(-1)
-
         R = random.randint(0,255)
         B = random.randint(0,255)
         G = random.randint(0,255)
@@ -147,6 +143,26 @@ class Space():
                         for diffusion in self.__allDiffusions[i][j][k]:
                             print(diffusion)
 
+    def print_memory_ussage(self, info = 'Użycie pamięci'):
+        print('')
+        print(info)
+        import os, psutil
+
+        MB = 1048576
+        GB = 1073741824
+
+        process = psutil.Process(os.getpid())
+
+        resident_memory = process.memory_info()[0]
+        virtual_memory = process.memory_info()[1]
+        shared_memory = process.memory_info()[2]
+        data_memory = process.memory_info()[5]
+
+        print(f'Pamięć rezydenta       = {round(resident_memory / MB, 2)}[MB] | {round(resident_memory / GB, 2)}[GB]')
+        print(f'Pamięć wirtualna       = {round(virtual_memory / MB, 2)}[MB] | {round(virtual_memory / GB, 2)}[GB]')
+        print(f'Pamięć współdzielona   = {round(shared_memory / MB, 2)}[MB] | {round(shared_memory  / GB, 2)}[GB]')
+        print(f'Pamięć danych (RAM)    = {round(data_memory / MB, 2)}[MB] | {round(data_memory / GB, 2)}[GB]')
+        print('')
 
     @property
     def size(self):

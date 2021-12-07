@@ -89,3 +89,6 @@ class Cell():
         + str(self.__z) + "]. Z energią: " 
         + to_print_energy + ". " 
         + str(self.__color))
+
+    def __hash__(self) -> int:
+        return hash((self.__x, self.__y, self.__z))

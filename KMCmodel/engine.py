@@ -1,4 +1,3 @@
-import KMCmodel.parameters
 import KMCmodel.size3D
 import KMCmodel.space
 import KMCmodel.cell
@@ -37,8 +36,11 @@ class Engine():
         to_print_time_sec = str(round(finish_time - start_time, 2)) + '[s]'
         to_print_time_hmmssms = str(datetime.timedelta(seconds = finish_time - start_time)) + '[h:mm:ss:ms]'
         print('Czas działania funkcji init (utworzenie przestrzeni do symulacji):', to_print_time_sec, '|', to_print_time_hmmssms)
-        print('')
+        #print('')
         self.__initTimeSec = finish_time - start_time
+
+        self.print_memory_ussage('Użycie pamięci w funkcji init engine')
+        print('Czas działania funkcji init (utworzenie przestrzeni do symulacji):', to_print_time_sec, '|', to_print_time_hmmssms)
      
 
     class EventsProbability():
@@ -86,7 +88,7 @@ class Engine():
         #self.__makeCalculations() #Wykonanie obliczeń w głównym wątku.
         #writerThread.join() #Zakończenie działania wątku do zapisu do pliku.
 
-        self.__makeCalculations_writer_on_main_thread() #Wykonanie obliczeń oraz zapisu w głównym wątku.
+        #self.__makeCalculations_writer_on_main_thread() #Wykonanie obliczeń oraz zapisu w głównym wątku.
         #WYKONANIE SUMULACJI ZAPIS DO PLIKU ITP.
 
 
@@ -95,7 +97,7 @@ class Engine():
 
 
 
-        #MIERZENIE I PRZETWARZANIE CZASU DO WYPISANIA.
+        '''#MIERZENIE I PRZETWARZANIE CZASU DO WYPISANIA.
         finish_time = time.perf_counter()
         to_print_time_sec = str(round(finish_time - start_time, 2)) + '[s]'
         to_print_time_hmmssms = str(datetime.timedelta(seconds = finish_time - start_time)) + '[h:mm:ss:ms]'
@@ -131,6 +133,8 @@ class Engine():
         print('Czas trwania symulacji (bez twrozenia przestrzeni):', to_print_time_sec, '|', to_print_time_hmmssms)
         print('Czas wykonania całego programu:', entire_time_sec, '|', entire_time_hmmssms)
         #WYPISANIE CZASU WYKONANIA PROGRAMU.
+
+        self.print_memory_ussage('Użycie pamięci po zakończeniu działania programu')'''
 
         return 0
 
@@ -414,3 +418,24 @@ class Engine():
         print('Tablica wszystkich adsorpcji')
         for adsorption in self.__space.adsorptionList:
             print(adsorption)
+
+    def print_memory_ussage(self, info = 'Użycie pamięci'):
+        print('')
+        print(info)
+        import os, psutil
+
+        MB = 1048576
+        GB = 1073741824
+
+        process = psutil.Process(os.getpid())
+
+        resident_memory = process.memory_info()[0]
+        virtual_memory = process.memory_info()[1]
+        shared_memory = process.memory_info()[2]
+        data_memory = process.memory_info()[5]
+
+        print(f'Pamięć rezydenta       = {round(resident_memory / MB, 2)}[MB] | {round(resident_memory / GB, 2)}[GB]')
+        print(f'Pamięć wirtualna       = {round(virtual_memory / MB, 2)}[MB] | {round(virtual_memory / GB, 2)}[GB]')
+        print(f'Pamięć współdzielona   = {round(shared_memory / MB, 2)}[MB] | {round(shared_memory  / GB, 2)}[GB]')
+        print(f'Pamięć danych (RAM)    = {round(data_memory / MB, 2)}[MB] | {round(data_memory / GB, 2)}[GB]')
+        print('')

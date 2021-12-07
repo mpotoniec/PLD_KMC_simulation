@@ -27,11 +27,6 @@ class Diffusion():
             self.__probability = 0
             return cumulated_probability
 
-        '''energyDiff = self.__targetCell.energy - self.__originCell.energy
-        expParam = -energyDiff / self.__parameters.kT
-        self.__probability = self.__parameters.Tn * self.__parameters.attempt_rate * math.exp(expParam)
-        self.__probability = self.__probability / (self.__parameters.deposition_rate_diffusion / (self.__parameters.cell_dim * self.__parameters.nano_second))'''
-
         energyDiff = self.__targetCell.energy - self.__originCell.energy
         expParam = -energyDiff / self.__kT
         self.__probability = self.__Tn * self.__attempt_rate * math.exp(expParam)
@@ -79,3 +74,6 @@ class Diffusion():
         + str(self.__targetCell.y) + ", z = " 
         + str(self.__targetCell.z) + "]. Z prawdopodowbieństwem: " 
         + str(self.__probability))
+
+    def __hash__(self) -> int:
+        return hash((self.originCell, self.targetCell))
