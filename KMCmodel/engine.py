@@ -38,8 +38,8 @@ class Engine():
         #print('')
         self.__initTimeSec = finish_time - start_time
 
-        self.print_memory_ussage('Użycie pamięci w funkcji init engine')
-        print('Czas działania funkcji init (utworzenie przestrzeni do symulacji):', to_print_time_sec, '|', to_print_time_hmmssms)
+        #self.print_memory_ussage('Użycie pamięci w funkcji init engine')
+        #print('Czas działania funkcji init (utworzenie przestrzeni do symulacji):', to_print_time_sec, '|', to_print_time_hmmssms)
      
 
     class EventsProbability():
@@ -81,11 +81,11 @@ class Engine():
 
 
         #WYKONANIE SUMULACJI ZAPIS DO PLIKU ITP.
-        #writerThread = threading.Thread(target=self.__writer) #Wykonanie zapisu do pliku w osobnym wątku.
-        #writerThread.start() #Uruchomienie wątku do zapisu do pliku.
+        writerThread = threading.Thread(target=self.__writer) #Wykonanie zapisu do pliku w osobnym wątku.
+        writerThread.start() #Uruchomienie wątku do zapisu do pliku.
 
-        #self.__makeCalculations() #Wykonanie obliczeń w głównym wątku.
-        #writerThread.join() #Zakończenie działania wątku do zapisu do pliku.
+        self.__makeCalculations() #Wykonanie obliczeń w głównym wątku.
+        writerThread.join() #Zakończenie działania wątku do zapisu do pliku.
 
         #self.__makeCalculations_writer_on_main_thread() #Wykonanie obliczeń oraz zapisu w głównym wątku.
         #WYKONANIE SUMULACJI ZAPIS DO PLIKU ITP.
@@ -228,7 +228,7 @@ class Engine():
 
             #Change adsorption of origin cell
             try:
-                tmp_cell = KMCmodel.cell.Cell(origin.x, origin.y + 1, origin.z, self.__parameters.energyAA)
+                tmp_cell = KMCmodel.cell.Cell(origin.x, origin.y + 1, origin.z)
                 tmp_origin_ads = KMCmodel.adsorption.Adsorption(tmp_cell, self.__parameters.adsorption_probability) 
                 adsEv_origin_index = self.__space.adsorptionList.index(tmp_origin_ads)
                 

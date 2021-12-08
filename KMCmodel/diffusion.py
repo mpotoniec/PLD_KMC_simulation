@@ -3,47 +3,22 @@ import KMCmodel.cell
 import math
 
 class Diffusion():
-    def __init__(self, originCell, targetCell, kT, Tn, attempt_rate, deposition_rate_diffusion, cell_dim, nano_second) -> None:
+    def __init__(self, originCell, targetCell) -> None:
         
         self.__probability = 0
         self.__originCell: KMCmodel.cell.Cell = originCell
         self.__targetCell: KMCmodel.cell.Cell = targetCell
 
-        self.__kT = kT
-        self.__Tn = Tn
-        self.__attempt_rate = attempt_rate
-        self.__deposition_rate_diffusion = deposition_rate_diffusion
-        self.__cell_dim = cell_dim
-        self.__nano_second = nano_second
+    def calculateProbability(self, kT, diff_prob_initial_params):
 
-    def calculateProbability(self, cumulated_probability):
-        cumulated_probability -= self.__probability
-
-        '''if self.__originCell.color.A == 0:
+        if self.__originCell.colorIndex == 0 or self.__targetCell.colorIndex != 0:
             self.__probability = 0
-            return cumulated_probability
-
-        if self.__targetCell.color.A != 0:
-            self.__probability = 0
-            return cumulated_probability'''
-
-        if self.__originCell.colorIndex == 0:
-            self.__probability = 0
-            return cumulated_probability
-        
-        if self.__targetCell.colorIndex != 0:
-            self.__probability = 0
-            return cumulated_probability
+            return self.__probability
 
         energyDiff = self.__targetCell.energy - self.__originCell.energy
-        expParam = -energyDiff / self.__kT
-        self.__probability = self.__Tn * self.__attempt_rate * math.exp(expParam)
-        self.__probability = self.__probability / (self.__deposition_rate_diffusion / (self.__cell_dim * self.__nano_second))
+        self.__probability = math.exp(-energyDiff / kT) * diff_prob_initial_params
 
-        cumulated_probability += self.__probability
-
-        return cumulated_probability
-
+        return self.__probability
 
 
     @property

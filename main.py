@@ -66,7 +66,7 @@ def main():
 
     clear_console()
     print_machine_info()
-    print_memory_ussage('Użycie pamięci przed utworzeniem przestrzeni do symulacji')
+    #print_memory_ussage('Użycie pamięci przed utworzeniem przestrzeni do symulacji')
 
     #make_calculation_without_gui()
     #make_calculations_with_guiQt5()

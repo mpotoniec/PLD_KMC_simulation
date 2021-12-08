@@ -4,30 +4,14 @@ import KMCmodel.diffusion
 from collections import Counter
 
 class Cell():
-    def __init__(self, x, y, z, energyAA) -> None:
+    def __init__(self, x, y, z) -> None:
         self.__x = x
         self.__y = y
         self.__z = z
-        #self.__color = KMCmodel.color.Color(0,0,0,0)
         self.__energy = 0
         self.__colorIndex = 0
 
         self.__neighbourhood = [None for _ in range(26)]
-
-        self.__energyAA = energyAA
-
-    '''def getMostPopularColorInNeighbourhood(self):
-        colors = []
-        for cell in self.__neighbourhood:
-            if cell.color.A == 0: continue
-            colors.append(cell.color)
-
-        if len(colors) != 0: 
-            result = Counter(colors).most_common()[0][0]
-        else: result = KMCmodel.color.Color(0, 0, 0, 0) 
-        
-        return result'''
-
 
 
     @property
@@ -57,27 +41,9 @@ class Cell():
     @property 
     def neighbourhood(self):
         return self.__neighbourhood
-    '''@property
-    def color(self):
-        return self.__color
-    @color.setter
-    def color(self, color_to_set):
-
-        energyAA = self.__energyAA
-
-        if self.__color.A == 0 and color_to_set.A != 0:
-            for neighbour in self.__neighbourhood:
-                neighbour.energy += energyAA
-        elif self.__color.A != 0 and color_to_set.A == 0:
-            for neighbour in self.__neighbourhood:
-                neighbour.energy -= energyAA
-
-        self.__color = color_to_set'''
-
     @property
     def colorIndex(self):
         return self.__colorIndex
-
     @colorIndex.setter
     def colorIndex(self, colorIndex):
         self.__colorIndex = colorIndex

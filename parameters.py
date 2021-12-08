@@ -33,7 +33,7 @@ class Parameters():
         self.__deposition_rate = parameters[11]'''
 
 
-        self.__space_size = 10 #70
+        self.__space_size = 20 #70
         self.__substrate_temperature = 300
         self.__melting_temperature = 2930
         self.__boltzman_constant = 8.617333262 * 10e-5
@@ -52,6 +52,10 @@ class Parameters():
         self.__Tn = pow(self.__Tr, self.__n)
         self.__kT = self.__Tr * self.__boltzman_constant
         self.__attempt_rate = self.__vibration_frequency
+
+        self.__Tn_attempt_rate = self.__Tn * self.__attempt_rate
+        self.__rate_cell_sec = self.__deposition_rate_diffusion / (self.__cell_dim * self.__nano_second)
+        self.__diff_prob_initial_params = self.__Tn_attempt_rate / self.__rate_cell_sec
 
     def create_new_parameters(self,space_size,substrate_temperature,melting_temperature,boltzman_constant,vibration_frequency,n,energyAA,
     energy_vapour,deposition_rate_diffusion,cell_dim,nano_second,deposition_rate):
@@ -74,6 +78,10 @@ class Parameters():
         self.__Tn = pow(self.__Tr, self.__n)
         self.__kT = self.__Tr * self.__boltzman_constant
         self.__attempt_rate = self.__vibration_frequency
+
+        self.__Tn_attempt_rate = self.__Tn * self.__attempt_rate
+        self.__rate_cell_sec = self.__deposition_rate_diffusion / (self.__cell_dim * self.__nano_second)
+        self.__diff_prob_initial_params = self.__Tn_attempt_rate / self.__rate_cell_sec
 
     @property
     def space_size(self): 
@@ -159,6 +167,15 @@ class Parameters():
     @property
     def attempt_rate(self): 
         return self.__attempt_rate
+    @property
+    def Tn_attempt_rate(self):
+        return self.__Tn_attempt_rate
+    @property
+    def rate_cell_sec(self):
+        return self.__rate_cell_sec
+    @property
+    def diff_prob_initial_params(self):
+        return self.__diff_prob_initial_params
 
     def __str__(self) -> str:
 

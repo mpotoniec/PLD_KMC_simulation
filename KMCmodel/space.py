@@ -12,8 +12,8 @@ class Space():
         self.__parameters = parameters
         self.__size = KMCmodel.size3D.Size3D(self.__parameters.space_size, self.__parameters.space_size, self.__parameters.space_size)
 
-        self.__cells = tuple(tuple(tuple(KMCmodel.cell.Cell(x, y, z, self.__parameters.energyAA) for z in range(self.__size.depth)) for y in range(self.__size.height)) for x in range(self.__size.width))
-        self.__allDiffusions = [[[[None for _ in range((9 + 8))] for _ in range(self.__size.depth)] for _ in range(self.__size.height)] for _ in range(self.__size.width)]
+        self.__cells = tuple(tuple(tuple(KMCmodel.cell.Cell(x, y, z) for z in range(self.__size.depth)) for y in range(self.__size.height)) for x in range(self.__size.width))
+        self.__allDiffusions = [[[ [] for _ in range(self.__size.depth)] for _ in range(self.__size.height)] for _ in range(self.__size.width)]
         self.__possibleDiffusions = set()
         self.__adsorptionList = [None for _ in range(self.__size.width * self.__size.depth)]
         self.__unique_colors = []
@@ -54,7 +54,7 @@ class Space():
             for j in range(self.__size.height):
                 for k in range(self.__size.depth):
 
-                    neighbour = 0
+                    #neighbour = 0
 
                     for x in range(-1, 2, 1):
                         for y in range(-1, 1, 1):
@@ -67,8 +67,9 @@ class Space():
                                 b = self.__mathMod(j + y, self.__size.height)
                                 c = self.__mathMod(k + z, self.__size.depth)
 
-                                self.__allDiffusions[i][j][k][neighbour] = KMCmodel.diffusion.Diffusion(self.__cells[i][j][k], self.__cells[a][b][c], self.__parameters.kT, self.__parameters.Tn, self.__parameters.attempt_rate, self.__parameters.deposition_rate_diffusion, self.__parameters.cell_dim, self.__parameters.nano_second)
-                                neighbour+=1
+                                self.__allDiffusions[i][j][k].append(KMCmodel.diffusion.Diffusion(self.__cells[i][j][k], self.__cells[a][b][c]))
+
+                                #neighbour+=1
                                 
     def __makeInitialAdsorptions(self):
         index = 0
@@ -83,12 +84,6 @@ class Space():
     def __getMostPopularColorInNeighbourhood(self, i, j, k):
         colorIndexes = []
         for neighbor in self.__cells[i][j][k].neighbourhood:
-
-            #na kolorach
-            #if self.__space.getColorAtIndex(neighbor.colorIndex).A == 0: continue
-            #colors.append(self.__space.getColorAtIndex(neighbor.colorIndex))
-
-            #na indeksach
             if neighbor.colorIndex == 0: continue
             colorIndexes.append(neighbor.colorIndex)
 
@@ -120,18 +115,16 @@ class Space():
                     c = self.__mathMod(z + k, len(self.__cells[0][0]))
 
                     for l in range(0, len(self.__allDiffusions[0][0][0]), 1):
-                        if self.__allDiffusions[a][b][c][l] == None: continue
                         self.__handleChange(self.__allDiffusions[a][b][c][l])
 
     def __handleChange(self, diffusion: KMCmodel.diffusion.Diffusion):
         pervous_probability = diffusion.probability
+        self.__cumulated_probability -= diffusion.probability
 
-        result = diffusion.calculateProbability(self.__cumulated_probability)
-        if result != None: self.__cumulated_probability = result
+        self.__cumulated_probability += diffusion.calculateProbability(self.__parameters.kT, self.__parameters.diff_prob_initial_params)
 
-        if diffusion.probability > 0 and pervous_probability == 0: self.__possibleDiffusions.add(diffusion) #self.__possibleDiffusions.append(diffusion)
-        
-        elif pervous_probability > 0 and diffusion.probability == 0: self.__possibleDiffusions.remove(diffusion) #self.__possibleDiffusions.remove(diffusion)
+        if diffusion.probability > 0 and pervous_probability == 0: self.__possibleDiffusions.add(diffusion)
+        elif pervous_probability > 0 and diffusion.probability == 0: self.__possibleDiffusions.remove(diffusion)
 
 
 
@@ -159,7 +152,6 @@ class Space():
 
 
     def cells_getColor(self, i, j, k):
-        #return self.__cells[i][j][k].colorIndex
         return self.__unique_colors[self.__cells[i][j][k].colorIndex]
 
     def cells_setColor(self, i, j, k):
@@ -202,8 +194,9 @@ class Space():
             for i in range(self.__size.width):
                 for j in range(self.__size.height):
                     for k in range(self.__size.depth):
-                        for diffusion in self.__allDiffusions[i][j][k]:
-                            print(diffusion)
+                        print(len(self.__allDiffusions[i][j][k]))
+                        #for diffusion in self.__allDiffusions[i][j][k]:
+                            #print(diffusion)
 
     def print_memory_ussage(self, info = 'Użycie pamięci'):
         print('')
