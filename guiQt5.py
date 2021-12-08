@@ -3,6 +3,7 @@ Podstawowe gui stworzone przy pomocy biblioteki PyQt5. Możliwość wizualizacji
 Brak możliwości wykonania kodu przy pomocy kompilatora JIT PYPY3. PYPY3 nie ma PyQt5
 '''
 import PyQt5.QtWidgets as qtw
+from PyQt5 import QtGui
 
 import parameters
 import KMCmodel.engine
@@ -11,6 +12,8 @@ class MainWindow(qtw.QWidget):
     def __init__(self):
         super().__init__()
 
+        self.setWindowIcon(QtGui.QIcon('icon.png'))
+        self.setWindowTitle('PLD Simulation')
         self.setLayout(qtw.QGridLayout())
 
         simulation_parameters = parameters.Parameters()

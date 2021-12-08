@@ -47,6 +47,8 @@ class MainWindow():
                 Queued_simulations['text'] = 'Number of queued simulations = 0'
 
         root = Tk()
+        root.call('wm', 'iconphoto', root._w, PhotoImage(file='icon.png'))
+        root.title('PLD Simulation')
 
         simulation_parameters = parameters.Parameters()
         simulations_list = []
