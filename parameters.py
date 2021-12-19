@@ -1,39 +1,6 @@
 class Parameters():
     def __init__(self) -> None:
-        '''parameters = []
-        file = open('parameters.txt', 'r')
-        for line in file:
-            line = line.split('=')
-
-            value = ''
-            if line[0] == 'space_size ': value = int(line[1])
-            elif line[0] == 'boltzman_constant ':
-                line = line[1].split('*')
-                value = float(line[0]) * float(line[1])
-            elif line[0] == 'deposition_rate ': 
-                line = line[1].split('/')
-                value = float(line[0]) / float(line[1])
-            else: value = float(line[1])
-
-            parameters.append(value)
-        file.close()
-
-        self.__space_size = parameters[0]
-        self.__substrate_temperature = int(parameters[1])
-        self.__melting_temperature = int(parameters[2])
-        self.__boltzman_constant = parameters[3]
-        self.__vibration_frequency = parameters[4]
-        self.__n = int(parameters[5])
-        self.__energyAA = parameters[6]
-        self.__energy_vapour = parameters[7]
-        self.__deposition_rate_diffusion = parameters[8]
-        self.__cell_dim = parameters[9]
-        self.__nano_second = parameters[10]
-
-        self.__deposition_rate = parameters[11]'''
-
-
-        self.__space_size = 20 #70
+        self.__space_size = 25 #70
         self.__substrate_temperature = 300
         self.__melting_temperature = 2930
         self.__boltzman_constant = 8.617333262 * 10e-5
@@ -47,6 +14,9 @@ class Parameters():
 
         self.__deposition_rate = 90.0e-9 / 1800.0
 
+
+
+        #Obliczenia parametrów:
         self.__adsorption_probability = self.__deposition_rate / self.__cell_dim
         self.__Tr = self.__substrate_temperature
         self.__Tn = pow(self.__Tr, self.__n)
@@ -73,6 +43,10 @@ class Parameters():
 
         self.__deposition_rate = float(deposition_rate)
 
+
+
+
+        #Obliczenia parametrów:
         self.__adsorption_probability = self.__deposition_rate / self.__cell_dim
         self.__Tr = self.__substrate_temperature
         self.__Tn = pow(self.__Tr, self.__n)

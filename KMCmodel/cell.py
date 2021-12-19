@@ -11,7 +11,8 @@ class Cell():
         self.__energy = 0
         self.__colorIndex = 0
 
-        self.__neighbourhood = [None for _ in range(26)]
+        #self.__neighbourhood = [None for _ in range(26)]
+        self.__neighbourhood = []
 
 
     @property
