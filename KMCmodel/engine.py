@@ -38,8 +38,8 @@ class Engine():
         #print('')
         self.__initTimeSec = finish_time - start_time
 
-        #self.print_memory_ussage('Użycie pamięci w funkcji init engine')
-        #print('Czas działania funkcji init (utworzenie przestrzeni do symulacji):', to_print_time_sec, '|', to_print_time_hmmssms)
+        self.print_memory_ussage('Użycie pamięci w funkcji init engine')
+        print('Czas działania funkcji init (utworzenie przestrzeni do symulacji):', to_print_time_sec, '|', to_print_time_hmmssms)
      
 
     class EventsProbability():
@@ -81,11 +81,11 @@ class Engine():
 
 
         #WYKONANIE SUMULACJI ZAPIS DO PLIKU ITP.
-        writerThread = threading.Thread(target=self.__writer) #Wykonanie zapisu do pliku w osobnym wątku.
-        writerThread.start() #Uruchomienie wątku do zapisu do pliku.
+        #writerThread = threading.Thread(target=self.__writer) #Wykonanie zapisu do pliku w osobnym wątku.
+        #writerThread.start() #Uruchomienie wątku do zapisu do pliku.
 
-        self.__makeCalculations() #Wykonanie obliczeń w głównym wątku.
-        writerThread.join() #Zakończenie działania wątku do zapisu do pliku.
+        #self.__makeCalculations() #Wykonanie obliczeń w głównym wątku.
+        #writerThread.join() #Zakończenie działania wątku do zapisu do pliku.
 
         #self.__makeCalculations_writer_on_main_thread() #Wykonanie obliczeń oraz zapisu w głównym wątku.
         #WYKONANIE SUMULACJI ZAPIS DO PLIKU ITP.
@@ -111,7 +111,7 @@ class Engine():
 
 
 
-        #WYPISANIE STATYSTYK ZJAWISK WYSTĘPUJĄCYCH W SYMULACJI.
+        '''#WYPISANIE STATYSTYK ZJAWISK WYSTĘPUJĄCYCH W SYMULACJI.
         print('')
         print('Ilość wystąpień adsorpcji:', self.__adsorptionCount, 'oraz dyfuzji', self.__diffusionCount, 'i None', self.__NoneCount)
         print('Ilość wystąpień wszystkich zdarzeń:', self.__adsorptionCount + self.__diffusionCount + self.__NoneCount)
@@ -120,7 +120,7 @@ class Engine():
         print('Ilość dodanych target dyfuzji do adsorptionList:', self.__diffusion_adsorption_add_targetCount)
         print('Ilość dodanych origin dyfuzji do adsorptionList:', self.__diffusion_adsorption_add_originCount)
         print('')
-        #WYPISANIE STATYSTYK ZJAWISK WYSTĘPUJĄCYCH W SYMULACJI.
+        #WYPISANIE STATYSTYK ZJAWISK WYSTĘPUJĄCYCH W SYMULACJI.'''
 
 
 

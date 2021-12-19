@@ -39,13 +39,14 @@ class Space():
                 for k in range(self.__size.depth):
 
                     for x in range(-1, 2, 1):
+                        a = self.__mathMod(i + x, self.__size.width)
+
                         for y in range(-1, 2, 1):
+                            b = self.__mathMod(j + y, self.__size.height)
+
                             for z in range(-1, 2, 1):
 
                                 if x == 0 and y == 0 and z == 0: continue
-
-                                a = self.__mathMod(i + x, self.__size.width)
-                                b = self.__mathMod(j + y, self.__size.height)
                                 c = self.__mathMod(k + z, self.__size.depth)
 
                                 self.__cells[i][j][k].neighbourhood.append(self.__cells[a][b][c])
