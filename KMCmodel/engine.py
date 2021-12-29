@@ -14,6 +14,7 @@ import time
 class Engine():
     #@profile
     def __init__(self, parameters) -> None:
+        print('')
         start_time = time.perf_counter()
 
         self.__parameters = parameters
@@ -38,8 +39,9 @@ class Engine():
         #print('')
         self.__initTimeSec = finish_time - start_time
 
-        self.print_memory_ussage('Użycie pamięci w funkcji init engine')
+        #self.print_memory_ussage('Użycie pamięci w funkcji init engine')
         print('Czas działania funkcji init (utworzenie przestrzeni do symulacji):', to_print_time_sec, '|', to_print_time_hmmssms)
+        print('')
      
 
     class EventsProbability():
@@ -81,11 +83,11 @@ class Engine():
 
 
         #WYKONANIE SUMULACJI ZAPIS DO PLIKU ITP.
-        #writerThread = threading.Thread(target=self.__writer) #Wykonanie zapisu do pliku w osobnym wątku.
-        #writerThread.start() #Uruchomienie wątku do zapisu do pliku.
+        writerThread = threading.Thread(target=self.__writer) #Wykonanie zapisu do pliku w osobnym wątku.
+        writerThread.start() #Uruchomienie wątku do zapisu do pliku.
 
-        #self.__makeCalculations() #Wykonanie obliczeń w głównym wątku.
-        #writerThread.join() #Zakończenie działania wątku do zapisu do pliku.
+        self.__makeCalculations() #Wykonanie obliczeń w głównym wątku.
+        writerThread.join() #Zakończenie działania wątku do zapisu do pliku.
 
         #self.__makeCalculations_writer_on_main_thread() #Wykonanie obliczeń oraz zapisu w głównym wątku.
         #WYKONANIE SUMULACJI ZAPIS DO PLIKU ITP.
@@ -150,7 +152,9 @@ class Engine():
         
         if eventTypePointer <= events_probability.adsorption:
             return self.__space.adsorptionList[self.__rng.randint(0, len(self.__space.adsorptionList) - 1)]
+        
         else:
+
             diffusionPointer = events_probability.diffusion * self.__rng.random()
             diffusion_probability_sum = 0.
 
@@ -159,6 +163,8 @@ class Engine():
                 if diffusion_probability_sum >= diffusionPointer: return diffusion
 
             return None
+
+            #return random.sample(self.__space.possibleDiffusions, 1)[0]
 
     def __handleEvent(self, event):
         #print('Wybrane zdarzenie to:', event)
@@ -263,10 +269,9 @@ class Engine():
             self.__handleEvent(self.__findEvent(propabilitySums))
 
             self.__time += 1 / propabilitySums.all
-            
-            #self.printads()
-            #self.printstate()
-        #self.printstate()
+
+        print('')
+        
 
     def __makeCalculations_writer_on_main_thread(self) -> None:
 
@@ -302,6 +307,7 @@ class Engine():
                 times.append(stop_time - start_time)            
         
         file.close()
+        print('')
 
         avarage_sec = sum(times)/len(times)
         avarage_hmmssms = str(datetime.timedelta(seconds = avarage_sec)) + '[h:mm:ss:ms]'
@@ -371,7 +377,6 @@ class Engine():
         avarage_sec = sum(times)/len(times)
         avarage_hmmssms = str(datetime.timedelta(seconds = avarage_sec)) + '[h:mm:ss:ms]'
         avarage_sec = str(round(avarage_sec, 2)) + '[s]'
-
 
         print('Liczba zapisów =', len(times), 'Sredni czas zapisu =', avarage_sec, '|', avarage_hmmssms)
         
